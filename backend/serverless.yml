@@ -1,99 +1,129 @@
-org: ${env:ORG_NAME}
-service: easycommerce
+service: easycommerce-backend
+frameworkVersion: "3"
+
+plugins:
+  - serverless-python-requirements
+  - serverless-dotenv-plugin
 
 provider:
   name: aws
-  runtime: python3.12
+  runtime: python3.11
   region: us-east-1
   timeout: 30
-
   iam:
     role: arn:aws:iam::${env:ID_AWS}:role/LabRole
-
   environment:
+    STAGE: ${sls:stage}
+    JWT_SECRET: ${env:JWT_SECRET}
     API_KEY_LLM: ${env:API_KEY_LLM}
-
-    USERS_TABLE: ${env:USERS_TABLE}
-    BUSINESSES_TABLE: ${env:BUSINESSES_TABLE}
-    REPORTS_TABLE: ${env:REPORTS_TABLE}
-
-    EVENT_BUS_NAME: ${env:EVENT_BUS_NAME}
+    USERS_TABLE: Users-${sls:stage}
+    BUSINESSES_TABLE: Businesses-${sls:stage}
+    REPORTS_TABLE: Reports-${sls:stage}
+    EVENT_BUS_NAME: EasyCommerceEventBus-${sls:stage}
+    REPORTS_BUCKET: easycommerce-reports-${sls:stage}-${env:ID_AWS}
 
 functions:
+  authAuthorizer:
+    handler: src/functions/auth/auth_authorizer.handler
 
-  # =====================
-  # AUTH
-  # =====================
-
-  auth_register:
+  authRegister:
     handler: src/functions/auth/auth_register.handler
     events:
       - http:
           path: auth/register
           method: post
+          cors: true
 
-  auth_login:
+  authLogin:
     handler: src/functions/auth/auth_login.handler
     events:
       - http:
           path: auth/login
           method: post
+          cors: true
 
-  auth_recovery:
+  authRecovery:
     handler: src/functions/auth/auth_recovery.handler
     events:
       - http:
           path: auth/recovery
           method: post
+          cors: true
 
-  send_email:
+  sendEmail:
     handler: src/functions/auth/send_email.handler
     events:
       - http:
           path: auth/send-email
           method: post
+          cors: true
 
-  # =====================
-  # BUSINESS
-  # =====================
-
-  create_business:
+  createBusiness:
     handler: src/functions/business/create_business.handler
     events:
       - http:
-          path: business
+          path: businesses
           method: post
+          cors: true
+          authorizer:
+            name: authAuthorizer
+            type: token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 0
 
-  read_business:
+  readBusiness:
     handler: src/functions/business/read_business.handler
     events:
       - http:
-          path: business/{id}
+          path: businesses
           method: get
+          cors: true
+          authorizer:
+            name: authAuthorizer
+            type: token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 0
+      - http:
+          path: businesses/{id}
+          method: get
+          cors: true
+          authorizer:
+            name: authAuthorizer
+            type: token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 0
 
-  update_business:
+  updateBusiness:
     handler: src/functions/business/update_business.handler
     events:
       - http:
-          path: business/{id}
+          path: businesses/{id}
           method: put
+          cors: true
+          authorizer:
+            name: authAuthorizer
+            type: token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 0
 
-  delete_business:
+  deleteBusiness:
     handler: src/functions/business/delete_business.handler
     events:
       - http:
-          path: business/{id}
+          path: businesses/{id}
           method: delete
+          cors: true
+          authorizer:
+            name: authAuthorizer
+            type: token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 0
 
-  # =====================
-  # EVENT DRIVEN
-  # =====================
-
-  generate_recommendation:
+  generateRecommendation:
     handler: src/functions/recommendation/generate_recommendation.handler
     events:
       - eventBridge:
-          eventBus: easycommerce-bus
+          eventBus: EasyCommerceEventBus-${sls:stage}
           pattern:
             source:
               - easycommerce.business
@@ -101,13 +131,87 @@ functions:
               - business.created
               - business.updated
 
-  generate_report:
+  generateReport:
     handler: src/functions/report/generate_report.handler
     events:
       - eventBridge:
-          eventBus: easycommerce-bus
+          eventBus: EasyCommerceEventBus-${sls:stage}
           pattern:
             source:
               - easycommerce.recommendation
             detail-type:
               - recommendation.generated
+
+resources:
+  Resources:
+    ReportsBucket:
+      Type: AWS::S3::Bucket
+      DeletionPolicy: Retain
+      Properties:
+        BucketName: easycommerce-reports-${sls:stage}-${env:ID_AWS}
+
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: Users-${sls:stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: email-index
+            KeySchema:
+              - AttributeName: email
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+    BusinessesTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: Businesses-${sls:stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: businessId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: businessId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: userId-index
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+    ReportsTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: Reports-${sls:stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: reportId
+            AttributeType: S
+          - AttributeName: businessId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: reportId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: businessId-index
+            KeySchema:
+              - AttributeName: businessId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
