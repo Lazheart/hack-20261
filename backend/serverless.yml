@@ -1,13 +1,113 @@
-org: ${ORG_NAME}
+org: ${env:ORG_NAME}
 service: easycommerce
 
 provider:
   name: aws
   runtime: python3.12
-  timeout: 30  
+  region: us-east-1
+  timeout: 30
+
   iam:
-    role: arn:aws:iam::${ID_AWS}:role/LabRole
+    role: arn:aws:iam::${env:ID_AWS}:role/LabRole
 
+  environment:
+    API_KEY_LLM: ${env:API_KEY_LLM}
 
+    USERS_TABLE: EasyCommerceUsers
+    BUSINESSES_TABLE: EasyCommerceBusinesses
+    REPORTS_TABLE: EasyCommerceReports
 
+    EVENT_BUS_NAME: easycommerce-bus
 
+functions:
+
+  # =====================
+  # AUTH
+  # =====================
+
+  auth_register:
+    handler: src/functions/auth/auth_register.handler
+    events:
+      - http:
+          path: auth/register
+          method: post
+
+  auth_login:
+    handler: src/functions/auth/auth_login.handler
+    events:
+      - http:
+          path: auth/login
+          method: post
+
+  auth_recovery:
+    handler: src/functions/auth/auth_recovery.handler
+    events:
+      - http:
+          path: auth/recovery
+          method: post
+
+  send_email:
+    handler: src/functions/auth/send_email.handler
+    events:
+      - http:
+          path: auth/send-email
+          method: post
+
+  # =====================
+  # BUSINESS
+  # =====================
+
+  create_business:
+    handler: src/functions/business/create_business.handler
+    events:
+      - http:
+          path: business
+          method: post
+
+  read_business:
+    handler: src/functions/business/read_business.handler
+    events:
+      - http:
+          path: business/{id}
+          method: get
+
+  update_business:
+    handler: src/functions/business/update_business.handler
+    events:
+      - http:
+          path: business/{id}
+          method: put
+
+  delete_business:
+    handler: src/functions/business/delete_business.handler
+    events:
+      - http:
+          path: business/{id}
+          method: delete
+
+  # =====================
+  # EVENT DRIVEN
+  # =====================
+
+  generate_recommendation:
+    handler: src/functions/recommendation/generate_recommendation.handler
+    events:
+      - eventBridge:
+          eventBus: easycommerce-bus
+          pattern:
+            source:
+              - easycommerce.business
+            detail-type:
+              - business.created
+              - business.updated
+
+  generate_report:
+    handler: src/functions/report/generate_report.handler
+    events:
+      - eventBridge:
+          eventBus: easycommerce-bus
+          pattern:
+            source:
+              - easycommerce.recommendation
+            detail-type:
+              - recommendation.generated
