@@ -3,7 +3,9 @@
   "private": true,
   "devDependencies": {
     "serverless": "3.39.0",
-    "serverless-python-requirements": "^6.1.0",
-    "serverless-dotenv-plugin": "^6.0.0"
+    "serverless-python-requirements": "^6.1.2"
+  },
+  "dependencies": {
+    "serverless-dotenv-plugin": "^4.0.2"
   }
 }
