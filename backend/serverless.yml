@@ -18,7 +18,7 @@ provider:
     STAGE: ${sls:stage}
 
     JWT_SECRET: ${env:JWT_SECRET}
-    GROQ_API_KEY: ${env:GROQ_API_KEY}
+    API_KEY_LLM: ${env:API_KEY_LLM}
 
     USERS_TABLE: Users-${sls:stage}
     BUSINESSES_TABLE: Businesses-${sls:stage}
