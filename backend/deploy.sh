@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-
+sudo npm install -g serverless@3
 echo "========================================"
 echo " Verificación previa al despliegue"
 echo "========================================"
