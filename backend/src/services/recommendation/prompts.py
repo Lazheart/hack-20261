@@ -1,40 +1,40 @@
-import json
+def get_business_analysis_prompt(business: dict) -> str:
+    return f"""
+Eres un consultor experto en transformacion digital para pequenas y medianas empresas (MYPES) en Peru.
 
-def build_analysis_prompt(business_data) -> str:
-    schema = {
-        "digitalMaturityScore": 0,
-        "maturityLevel": "Inicial|Básico|Intermedio|Avanzado",
-        "summary": "...",
-        "recommendations": [
-            {
-                "priority": 1,
-                "title": "...",
-                "description": "...",
-                "cost": "bajo|medio|alto",
-                "timeToImplement": "...",
-                "tools": [],
-                "freeApis": [],
-                "expectedImpact": "..."
-            }
-        ],
-        "quickWins": [],
-        "priorityActions": []
-    }
-    
-    prompt = f"""
-Actúa como un consultor experto en transformación digital para MYPES. Analiza los siguientes datos de una empresa y genera un plan de digitalización.
-Datos de la empresa:
-{json.dumps(business_data, indent=2)}
+Analiza el siguiente negocio y genera un reporte completo en formato JSON.
 
-Debes responder ÚNICAMENTE con un JSON válido que siga exactamente este esquema, no incluyas texto adicional ni markdown:
-{json.dumps(schema, indent=2)}
+DATOS DEL NEGOCIO:
+- Nombre: {business.get('nombre', 'No especificado')}
+- Rubro: {business.get('rubro', 'No especificado')}
+- Direccion: {business.get('direccion', 'No especificado')}
+- Tiene redes sociales: {business.get('tiene_redes', 'No')}
+- Acepta pagos digitales: {business.get('acepta_pagos_digitales', 'No')}
+- Lleva inventario digital: {business.get('inventario_digital', 'No')}
+- Descripcion adicional: {business.get('descripcion', 'Ninguna')}
 
-Instrucciones:
-1. Evalúa el nivel de madurez digital (0-100) basándote en su presencia digital y herramientas actuales.
-2. Define el maturityLevel (Inicial, Básico, Intermedio, Avanzado).
-3. Escribe un summary del estado actual.
-4. Genera el top 5 de recommendations priorizadas por impacto/costo. Para cada una: title, description, cost (bajo/medio/alto), timeToImplement, herramientas sugeridas (tools), APIs gratuitas disponibles (freeApis) y expectedImpact.
-5. Identifica quickWins (acciones inmediatas para los primeros 30 días).
-6. Lista priorityActions como los siguientes pasos críticos.
+Responde unicamente con un JSON valido con esta estructura exacta, sin texto adicional:
+
+{{
+    "diagnostico": {{
+        "nivel_digitalizacion": "MUY BAJO | BAJO | MEDIO | ALTO",
+        "score": 0,
+        "problemas_encontrados": ["problema1", "problema2"]
+    }},
+    "recomendaciones": {{
+        "pagos_digitales": ["herramienta1", "herramienta2"],
+        "redes_sociales": ["red1", "red2"],
+        "inventario": ["herramienta1"],
+        "presencia_online": ["herramienta1"]
+    }},
+    "roadmap": [
+        {{
+            "semana": 1,
+            "tarea": "nombre de la tarea",
+            "pasos": ["paso1", "paso2", "paso3"],
+            "costo": "Gratis | S/. XX"
+        }}
+    ],
+    "resumen": "Un parrafo corto explicando la situacion del negocio y el impacto esperado"
+}}
 """
-    return prompt
