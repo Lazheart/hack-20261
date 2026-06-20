@@ -10,30 +10,19 @@ provider:
   runtime: python3.11
   region: us-east-1
   timeout: 30
-
   iam:
     role: arn:aws:iam::${env:ID_AWS}:role/LabRole
-
   environment:
     STAGE: ${sls:stage}
-
     JWT_SECRET: ${env:JWT_SECRET}
     API_KEY_LLM: ${env:API_KEY_LLM}
-
     USERS_TABLE: Users-${sls:stage}
     BUSINESSES_TABLE: Businesses-${sls:stage}
     REPORTS_TABLE: Reports-${sls:stage}
-
     EVENT_BUS_NAME: EasyCommerceEventBus-${sls:stage}
-
     REPORTS_BUCKET: easycommerce-reports-${sls:stage}-${env:ID_AWS}
 
 functions:
-
-  # =====================
-  # AUTH
-  # =====================
-
   authAuthorizer:
     handler: src/functions/auth/auth_authorizer.handler
 
@@ -69,10 +58,6 @@ functions:
           method: post
           cors: true
 
-  # =====================
-  # BUSINESS
-  # =====================
-
   createBusiness:
     handler: src/functions/business/create_business.handler
     events:
@@ -98,7 +83,6 @@ functions:
             type: token
             identitySource: method.request.header.Authorization
             resultTtlInSeconds: 0
-
       - http:
           path: businesses/{id}
           method: get
@@ -135,10 +119,6 @@ functions:
             identitySource: method.request.header.Authorization
             resultTtlInSeconds: 0
 
-  # =====================
-  # EVENT DRIVEN AI
-  # =====================
-
   generateRecommendation:
     handler: src/functions/recommendation/generate_recommendation.handler
     events:
@@ -164,34 +144,26 @@ functions:
 
 resources:
   Resources:
-
-    EasyCommerceEventBus:
-      Type: AWS::Events::EventBus
-      Properties:
-        Name: EasyCommerceEventBus-${sls:stage}
-
     ReportsBucket:
       Type: AWS::S3::Bucket
+      DeletionPolicy: Retain
       Properties:
         BucketName: easycommerce-reports-${sls:stage}-${env:ID_AWS}
 
     UsersTable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
       Properties:
         TableName: Users-${sls:stage}
         BillingMode: PAY_PER_REQUEST
-
         AttributeDefinitions:
           - AttributeName: userId
             AttributeType: S
-
           - AttributeName: email
             AttributeType: S
-
         KeySchema:
           - AttributeName: userId
             KeyType: HASH
-
         GlobalSecondaryIndexes:
           - IndexName: email-index
             KeySchema:
@@ -202,21 +174,18 @@ resources:
 
     BusinessesTable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
       Properties:
         TableName: Businesses-${sls:stage}
         BillingMode: PAY_PER_REQUEST
-
         AttributeDefinitions:
           - AttributeName: businessId
             AttributeType: S
-
           - AttributeName: userId
             AttributeType: S
-
         KeySchema:
           - AttributeName: businessId
             KeyType: HASH
-
         GlobalSecondaryIndexes:
           - IndexName: userId-index
             KeySchema:
@@ -227,21 +196,18 @@ resources:
 
     ReportsTable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
       Properties:
         TableName: Reports-${sls:stage}
         BillingMode: PAY_PER_REQUEST
-
         AttributeDefinitions:
           - AttributeName: reportId
             AttributeType: S
-
           - AttributeName: businessId
             AttributeType: S
-
         KeySchema:
           - AttributeName: reportId
             KeyType: HASH
-
         GlobalSecondaryIndexes:
           - IndexName: businessId-index
             KeySchema:

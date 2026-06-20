@@ -1,0 +1,2917 @@
+{
+  "service": {
+    "service": "easycommerce-backend",
+    "serviceObject": {
+      "name": "easycommerce-backend"
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "python3.11",
+      "region": "us-east-1",
+      "timeout": 30,
+      "iam": {
+        "role": "arn:aws:iam::196016474413:role/LabRole"
+      },
+      "environment": {
+        "STAGE": "dev",
+        "JWT_SECRET": "easycommerce-secret-2026",
+        "API_KEY_LLM": "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",
+        "USERS_TABLE": "EasyCommerceUsers",
+        "BUSINESSES_TABLE": "EasyCommerceBusinesses",
+        "REPORTS_TABLE": "EasyCommerceReports",
+        "EVENT_BUS_NAME": "easycommerce-bus",
+        "REPORTS_BUCKET": "easycommerce-reports-bucket",
+        "ID_AWS": "196016474413",
+        "ORG_NAME": "leandrodemarini",
+        "S3_BUCKET_NAME": "easycommerce-files"
+      },
+      "stage": "dev",
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "ServerlessDeploymentBucketPolicy": {
+            "Type": "AWS::S3::BucketPolicy",
+            "Properties": {
+              "Bucket": {
+                "Ref": "ServerlessDeploymentBucket"
+              },
+              "PolicyDocument": {
+                "Statement": [
+                  {
+                    "Action": "s3:*",
+                    "Effect": "Deny",
+                    "Principal": "*",
+                    "Resource": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            },
+                            "/*"
+                          ]
+                        ]
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            }
+                          ]
+                        ]
+                      }
+                    ],
+                    "Condition": {
+                      "Bool": {
+                        "aws:SecureTransport": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "AuthAuthorizerLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/easycommerce-backend-dev-authAuthorizer"
+            }
+          },
+          "AuthRegisterLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/easycommerce-backend-dev-authRegister"
+            }
+          },
+          "AuthLoginLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/easycommerce-backend-dev-authLogin"
+            }
+          },
+          "AuthRecoveryLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/easycommerce-backend-dev-authRecovery"
+            }
+          },
+          "SendEmailLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/easycommerce-backend-dev-sendEmail"
+            }
+          },
+          "CreateBusinessLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/easycommerce-backend-dev-createBusiness"
+            }
+          },
+          "ReadBusinessLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/easycommerce-backend-dev-readBusiness"
+            }
+          },
+          "UpdateBusinessLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/easycommerce-backend-dev-updateBusiness"
+            }
+          },
+          "DeleteBusinessLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/easycommerce-backend-dev-deleteBusiness"
+            }
+          },
+          "GenerateRecommendationLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/easycommerce-backend-dev-generateRecommendation"
+            }
+          },
+          "GenerateReportLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/easycommerce-backend-dev-generateReport"
+            }
+          },
+          "AuthAuthorizerLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/easycommerce-backend/dev/1781982803877-2026-06-20T19:13:23.877Z/easycommerce-backend.zip"
+              },
+              "Handler": "src/functions/auth/auth_authorizer.handler",
+              "Runtime": "python3.11",
+              "FunctionName": "easycommerce-backend-dev-authAuthorizer",
+              "MemorySize": 1024,
+              "Timeout": 30,
+              "Environment": {
+                "Variables": {
+                  "STAGE": "dev",
+                  "JWT_SECRET": "easycommerce-secret-2026",
+                  "API_KEY_LLM": "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",
+                  "USERS_TABLE": "EasyCommerceUsers",
+                  "BUSINESSES_TABLE": "EasyCommerceBusinesses",
+                  "REPORTS_TABLE": "EasyCommerceReports",
+                  "EVENT_BUS_NAME": "easycommerce-bus",
+                  "REPORTS_BUCKET": "easycommerce-reports-bucket",
+                  "ID_AWS": "196016474413",
+                  "ORG_NAME": "leandrodemarini",
+                  "S3_BUCKET_NAME": "easycommerce-files"
+                }
+              },
+              "Role": "arn:aws:iam::196016474413:role/LabRole"
+            },
+            "DependsOn": [
+              "AuthAuthorizerLogGroup"
+            ]
+          },
+          "AuthRegisterLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/easycommerce-backend/dev/1781982803877-2026-06-20T19:13:23.877Z/easycommerce-backend.zip"
+              },
+              "Handler": "src/functions/auth/auth_register.handler",
+              "Runtime": "python3.11",
+              "FunctionName": "easycommerce-backend-dev-authRegister",
+              "MemorySize": 1024,
+              "Timeout": 30,
+              "Environment": {
+                "Variables": {
+                  "STAGE": "dev",
+                  "JWT_SECRET": "easycommerce-secret-2026",
+                  "API_KEY_LLM": "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",
+                  "USERS_TABLE": "EasyCommerceUsers",
+                  "BUSINESSES_TABLE": "EasyCommerceBusinesses",
+                  "REPORTS_TABLE": "EasyCommerceReports",
+                  "EVENT_BUS_NAME": "easycommerce-bus",
+                  "REPORTS_BUCKET": "easycommerce-reports-bucket",
+                  "ID_AWS": "196016474413",
+                  "ORG_NAME": "leandrodemarini",
+                  "S3_BUCKET_NAME": "easycommerce-files"
+                }
+              },
+              "Role": "arn:aws:iam::196016474413:role/LabRole"
+            },
+            "DependsOn": [
+              "AuthRegisterLogGroup"
+            ]
+          },
+          "AuthLoginLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/easycommerce-backend/dev/1781982803877-2026-06-20T19:13:23.877Z/easycommerce-backend.zip"
+              },
+              "Handler": "src/functions/auth/auth_login.handler",
+              "Runtime": "python3.11",
+              "FunctionName": "easycommerce-backend-dev-authLogin",
+              "MemorySize": 1024,
+              "Timeout": 30,
+              "Environment": {
+                "Variables": {
+                  "STAGE": "dev",
+                  "JWT_SECRET": "easycommerce-secret-2026",
+                  "API_KEY_LLM": "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",
+                  "USERS_TABLE": "EasyCommerceUsers",
+                  "BUSINESSES_TABLE": "EasyCommerceBusinesses",
+                  "REPORTS_TABLE": "EasyCommerceReports",
+                  "EVENT_BUS_NAME": "easycommerce-bus",
+                  "REPORTS_BUCKET": "easycommerce-reports-bucket",
+                  "ID_AWS": "196016474413",
+                  "ORG_NAME": "leandrodemarini",
+                  "S3_BUCKET_NAME": "easycommerce-files"
+                }
+              },
+              "Role": "arn:aws:iam::196016474413:role/LabRole"
+            },
+            "DependsOn": [
+              "AuthLoginLogGroup"
+            ]
+          },
+          "AuthRecoveryLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/easycommerce-backend/dev/1781982803877-2026-06-20T19:13:23.877Z/easycommerce-backend.zip"
+              },
+              "Handler": "src/functions/auth/auth_recovery.handler",
+              "Runtime": "python3.11",
+              "FunctionName": "easycommerce-backend-dev-authRecovery",
+              "MemorySize": 1024,
+              "Timeout": 30,
+              "Environment": {
+                "Variables": {
+                  "STAGE": "dev",
+                  "JWT_SECRET": "easycommerce-secret-2026",
+                  "API_KEY_LLM": "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",
+                  "USERS_TABLE": "EasyCommerceUsers",
+                  "BUSINESSES_TABLE": "EasyCommerceBusinesses",
+                  "REPORTS_TABLE": "EasyCommerceReports",
+                  "EVENT_BUS_NAME": "easycommerce-bus",
+                  "REPORTS_BUCKET": "easycommerce-reports-bucket",
+                  "ID_AWS": "196016474413",
+                  "ORG_NAME": "leandrodemarini",
+                  "S3_BUCKET_NAME": "easycommerce-files"
+                }
+              },
+              "Role": "arn:aws:iam::196016474413:role/LabRole"
+            },
+            "DependsOn": [
+              "AuthRecoveryLogGroup"
+            ]
+          },
+          "SendEmailLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/easycommerce-backend/dev/1781982803877-2026-06-20T19:13:23.877Z/easycommerce-backend.zip"
+              },
+              "Handler": "src/functions/auth/send_email.handler",
+              "Runtime": "python3.11",
+              "FunctionName": "easycommerce-backend-dev-sendEmail",
+              "MemorySize": 1024,
+              "Timeout": 30,
+              "Environment": {
+                "Variables": {
+                  "STAGE": "dev",
+                  "JWT_SECRET": "easycommerce-secret-2026",
+                  "API_KEY_LLM": "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",
+                  "USERS_TABLE": "EasyCommerceUsers",
+                  "BUSINESSES_TABLE": "EasyCommerceBusinesses",
+                  "REPORTS_TABLE": "EasyCommerceReports",
+                  "EVENT_BUS_NAME": "easycommerce-bus",
+                  "REPORTS_BUCKET": "easycommerce-reports-bucket",
+                  "ID_AWS": "196016474413",
+                  "ORG_NAME": "leandrodemarini",
+                  "S3_BUCKET_NAME": "easycommerce-files"
+                }
+              },
+              "Role": "arn:aws:iam::196016474413:role/LabRole"
+            },
+            "DependsOn": [
+              "SendEmailLogGroup"
+            ]
+          },
+          "CreateBusinessLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/easycommerce-backend/dev/1781982803877-2026-06-20T19:13:23.877Z/easycommerce-backend.zip"
+              },
+              "Handler": "src/functions/business/create_business.handler",
+              "Runtime": "python3.11",
+              "FunctionName": "easycommerce-backend-dev-createBusiness",
+              "MemorySize": 1024,
+              "Timeout": 30,
+              "Environment": {
+                "Variables": {
+                  "STAGE": "dev",
+                  "JWT_SECRET": "easycommerce-secret-2026",
+                  "API_KEY_LLM": "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",
+                  "USERS_TABLE": "EasyCommerceUsers",
+                  "BUSINESSES_TABLE": "EasyCommerceBusinesses",
+                  "REPORTS_TABLE": "EasyCommerceReports",
+                  "EVENT_BUS_NAME": "easycommerce-bus",
+                  "REPORTS_BUCKET": "easycommerce-reports-bucket",
+                  "ID_AWS": "196016474413",
+                  "ORG_NAME": "leandrodemarini",
+                  "S3_BUCKET_NAME": "easycommerce-files"
+                }
+              },
+              "Role": "arn:aws:iam::196016474413:role/LabRole"
+            },
+            "DependsOn": [
+              "CreateBusinessLogGroup"
+            ]
+          },
+          "ReadBusinessLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/easycommerce-backend/dev/1781982803877-2026-06-20T19:13:23.877Z/easycommerce-backend.zip"
+              },
+              "Handler": "src/functions/business/read_business.handler",
+              "Runtime": "python3.11",
+              "FunctionName": "easycommerce-backend-dev-readBusiness",
+              "MemorySize": 1024,
+              "Timeout": 30,
+              "Environment": {
+                "Variables": {
+                  "STAGE": "dev",
+                  "JWT_SECRET": "easycommerce-secret-2026",
+                  "API_KEY_LLM": "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",
+                  "USERS_TABLE": "EasyCommerceUsers",
+                  "BUSINESSES_TABLE": "EasyCommerceBusinesses",
+                  "REPORTS_TABLE": "EasyCommerceReports",
+                  "EVENT_BUS_NAME": "easycommerce-bus",
+                  "REPORTS_BUCKET": "easycommerce-reports-bucket",
+                  "ID_AWS": "196016474413",
+                  "ORG_NAME": "leandrodemarini",
+                  "S3_BUCKET_NAME": "easycommerce-files"
+                }
+              },
+              "Role": "arn:aws:iam::196016474413:role/LabRole"
+            },
+            "DependsOn": [
+              "ReadBusinessLogGroup"
+            ]
+          },
+          "UpdateBusinessLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/easycommerce-backend/dev/1781982803877-2026-06-20T19:13:23.877Z/easycommerce-backend.zip"
+              },
+              "Handler": "src/functions/business/update_business.handler",
+              "Runtime": "python3.11",
+              "FunctionName": "easycommerce-backend-dev-updateBusiness",
+              "MemorySize": 1024,
+              "Timeout": 30,
+              "Environment": {
+                "Variables": {
+                  "STAGE": "dev",
+                  "JWT_SECRET": "easycommerce-secret-2026",
+                  "API_KEY_LLM": "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",
+                  "USERS_TABLE": "EasyCommerceUsers",
+                  "BUSINESSES_TABLE": "EasyCommerceBusinesses",
+                  "REPORTS_TABLE": "EasyCommerceReports",
+                  "EVENT_BUS_NAME": "easycommerce-bus",
+                  "REPORTS_BUCKET": "easycommerce-reports-bucket",
+                  "ID_AWS": "196016474413",
+                  "ORG_NAME": "leandrodemarini",
+                  "S3_BUCKET_NAME": "easycommerce-files"
+                }
+              },
+              "Role": "arn:aws:iam::196016474413:role/LabRole"
+            },
+            "DependsOn": [
+              "UpdateBusinessLogGroup"
+            ]
+          },
+          "DeleteBusinessLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/easycommerce-backend/dev/1781982803877-2026-06-20T19:13:23.877Z/easycommerce-backend.zip"
+              },
+              "Handler": "src/functions/business/delete_business.handler",
+              "Runtime": "python3.11",
+              "FunctionName": "easycommerce-backend-dev-deleteBusiness",
+              "MemorySize": 1024,
+              "Timeout": 30,
+              "Environment": {
+                "Variables": {
+                  "STAGE": "dev",
+                  "JWT_SECRET": "easycommerce-secret-2026",
+                  "API_KEY_LLM": "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",
+                  "USERS_TABLE": "EasyCommerceUsers",
+                  "BUSINESSES_TABLE": "EasyCommerceBusinesses",
+                  "REPORTS_TABLE": "EasyCommerceReports",
+                  "EVENT_BUS_NAME": "easycommerce-bus",
+                  "REPORTS_BUCKET": "easycommerce-reports-bucket",
+                  "ID_AWS": "196016474413",
+                  "ORG_NAME": "leandrodemarini",
+                  "S3_BUCKET_NAME": "easycommerce-files"
+                }
+              },
+              "Role": "arn:aws:iam::196016474413:role/LabRole"
+            },
+            "DependsOn": [
+              "DeleteBusinessLogGroup"
+            ]
+          },
+          "GenerateRecommendationLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/easycommerce-backend/dev/1781982803877-2026-06-20T19:13:23.877Z/easycommerce-backend.zip"
+              },
+              "Handler": "src/functions/recommendation/generate_recommendation.handler",
+              "Runtime": "python3.11",
+              "FunctionName": "easycommerce-backend-dev-generateRecommendation",
+              "MemorySize": 1024,
+              "Timeout": 30,
+              "Environment": {
+                "Variables": {
+                  "STAGE": "dev",
+                  "JWT_SECRET": "easycommerce-secret-2026",
+                  "API_KEY_LLM": "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",
+                  "USERS_TABLE": "EasyCommerceUsers",
+                  "BUSINESSES_TABLE": "EasyCommerceBusinesses",
+                  "REPORTS_TABLE": "EasyCommerceReports",
+                  "EVENT_BUS_NAME": "easycommerce-bus",
+                  "REPORTS_BUCKET": "easycommerce-reports-bucket",
+                  "ID_AWS": "196016474413",
+                  "ORG_NAME": "leandrodemarini",
+                  "S3_BUCKET_NAME": "easycommerce-files"
+                }
+              },
+              "Role": "arn:aws:iam::196016474413:role/LabRole"
+            },
+            "DependsOn": [
+              "GenerateRecommendationLogGroup"
+            ]
+          },
+          "GenerateReportLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/easycommerce-backend/dev/1781982803877-2026-06-20T19:13:23.877Z/easycommerce-backend.zip"
+              },
+              "Handler": "src/functions/report/generate_report.handler",
+              "Runtime": "python3.11",
+              "FunctionName": "easycommerce-backend-dev-generateReport",
+              "MemorySize": 1024,
+              "Timeout": 30,
+              "Environment": {
+                "Variables": {
+                  "STAGE": "dev",
+                  "JWT_SECRET": "easycommerce-secret-2026",
+                  "API_KEY_LLM": "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",
+                  "USERS_TABLE": "EasyCommerceUsers",
+                  "BUSINESSES_TABLE": "EasyCommerceBusinesses",
+                  "REPORTS_TABLE": "EasyCommerceReports",
+                  "EVENT_BUS_NAME": "easycommerce-bus",
+                  "REPORTS_BUCKET": "easycommerce-reports-bucket",
+                  "ID_AWS": "196016474413",
+                  "ORG_NAME": "leandrodemarini",
+                  "S3_BUCKET_NAME": "easycommerce-files"
+                }
+              },
+              "Role": "arn:aws:iam::196016474413:role/LabRole"
+            },
+            "DependsOn": [
+              "GenerateReportLogGroup"
+            ]
+          },
+          "AuthAuthorizerLambdaVersionJYlGbPkL0fQJx0UqLCEp6Pz37h1QGnIfno8Sy9m7MM": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "AuthAuthorizerLambdaFunction"
+              },
+              "CodeSha256": "I/5b9TvJNBaL4XQLAZ4lFoAmJBqokrRXFfp44q45rb4="
+            }
+          },
+          "AuthRegisterLambdaVersionYk2dgvFfZmpWBHhg4fdVG28RRj5l62Bw7xnEIBzRmI": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "AuthRegisterLambdaFunction"
+              },
+              "CodeSha256": "I/5b9TvJNBaL4XQLAZ4lFoAmJBqokrRXFfp44q45rb4="
+            }
+          },
+          "AuthLoginLambdaVersionb10RBjRS9JV9Uo06JdfVngRrgocdKrWKcjZPRkfMQM": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "AuthLoginLambdaFunction"
+              },
+              "CodeSha256": "I/5b9TvJNBaL4XQLAZ4lFoAmJBqokrRXFfp44q45rb4="
+            }
+          },
+          "AuthRecoveryLambdaVersion8ewWQ5aGVoWoSL5fUVef0xx6zWbtnYwhpCSkAgJ2DI": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "AuthRecoveryLambdaFunction"
+              },
+              "CodeSha256": "I/5b9TvJNBaL4XQLAZ4lFoAmJBqokrRXFfp44q45rb4="
+            }
+          },
+          "SendEmailLambdaVersionrkqPS111EGRKmgRKRRQvbH9QvF4TGgAV3L0oK4rQne0": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "SendEmailLambdaFunction"
+              },
+              "CodeSha256": "I/5b9TvJNBaL4XQLAZ4lFoAmJBqokrRXFfp44q45rb4="
+            }
+          },
+          "CreateBusinessLambdaVersionqvcIHP08I3bM0b4G3QybbILct4imQsqpaXYJ2b3O4": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "CreateBusinessLambdaFunction"
+              },
+              "CodeSha256": "I/5b9TvJNBaL4XQLAZ4lFoAmJBqokrRXFfp44q45rb4="
+            }
+          },
+          "ReadBusinessLambdaVersionH16JuBYLMKpOTf0YrfwR33Jq4IQWPvJOpoe2nCf18VQ": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ReadBusinessLambdaFunction"
+              },
+              "CodeSha256": "I/5b9TvJNBaL4XQLAZ4lFoAmJBqokrRXFfp44q45rb4="
+            }
+          },
+          "UpdateBusinessLambdaVersionr0xonWoFcDDIDIdWXm5X26iEgPmu0xljJamnmDslzM": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "UpdateBusinessLambdaFunction"
+              },
+              "CodeSha256": "I/5b9TvJNBaL4XQLAZ4lFoAmJBqokrRXFfp44q45rb4="
+            }
+          },
+          "DeleteBusinessLambdaVersionU6amQ5xGKRaQwN1ruxUmJ7W2PaOvJGj5yviA4pvQNc": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "DeleteBusinessLambdaFunction"
+              },
+              "CodeSha256": "I/5b9TvJNBaL4XQLAZ4lFoAmJBqokrRXFfp44q45rb4="
+            }
+          },
+          "GenerateRecommendationLambdaVersionDuQ64XPkHmtnIKbtgOJRZaQynzb4FSDTcjq5NZZGYs": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "GenerateRecommendationLambdaFunction"
+              },
+              "CodeSha256": "I/5b9TvJNBaL4XQLAZ4lFoAmJBqokrRXFfp44q45rb4="
+            }
+          },
+          "GenerateReportLambdaVersionx1es4RVaIFxxcQpSvNXExule4AnmOdtPzx9dpKADKw": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "GenerateReportLambdaFunction"
+              },
+              "CodeSha256": "I/5b9TvJNBaL4XQLAZ4lFoAmJBqokrRXFfp44q45rb4="
+            }
+          },
+          "ApiGatewayRestApi": {
+            "Type": "AWS::ApiGateway::RestApi",
+            "Properties": {
+              "Name": "dev-easycommerce-backend",
+              "EndpointConfiguration": {
+                "Types": [
+                  "EDGE"
+                ]
+              },
+              "Policy": ""
+            }
+          },
+          "ApiGatewayResourceAuth": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "auth",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceAuthRegister": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceAuth"
+              },
+              "PathPart": "register",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceAuthLogin": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceAuth"
+              },
+              "PathPart": "login",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceAuthRecovery": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceAuth"
+              },
+              "PathPart": "recovery",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceAuthSendDashemail": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceAuth"
+              },
+              "PathPart": "send-email",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceBusinesses": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "businesses",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceBusinessesIdVar": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceBusinesses"
+              },
+              "PathPart": "{id}",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodAuthRegisterOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceAuthRegister"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodAuthLoginOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceAuthLogin"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodAuthRecoveryOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceAuthRecovery"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodAuthSendDashemailOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceAuthSendDashemail"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodBusinessesOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,POST'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceBusinesses"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodBusinessesIdVarOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,DELETE,PUT,GET'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceBusinessesIdVar"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodAuthRegisterPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceAuthRegister"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "AuthRegisterLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "AuthRegisterLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodAuthLoginPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceAuthLogin"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "AuthLoginLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "AuthLoginLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodAuthRecoveryPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceAuthRecovery"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "AuthRecoveryLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "AuthRecoveryLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodAuthSendDashemailPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceAuthSendDashemail"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "SendEmailLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "SendEmailLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodBusinessesPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceBusinesses"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "CUSTOM",
+              "AuthorizerId": {
+                "Ref": "AuthAuthorizerApiGatewayAuthorizer"
+              },
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "CreateBusinessLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "AuthAuthorizerApiGatewayAuthorizer"
+            ]
+          },
+          "ApiGatewayMethodBusinessesGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceBusinesses"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "CUSTOM",
+              "AuthorizerId": {
+                "Ref": "AuthAuthorizerApiGatewayAuthorizer"
+              },
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "ReadBusinessLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "AuthAuthorizerApiGatewayAuthorizer"
+            ]
+          },
+          "ApiGatewayMethodBusinessesIdVarGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceBusinessesIdVar"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "CUSTOM",
+              "AuthorizerId": {
+                "Ref": "AuthAuthorizerApiGatewayAuthorizer"
+              },
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "ReadBusinessLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "AuthAuthorizerApiGatewayAuthorizer"
+            ]
+          },
+          "ApiGatewayMethodBusinessesIdVarPut": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "PUT",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceBusinessesIdVar"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "CUSTOM",
+              "AuthorizerId": {
+                "Ref": "AuthAuthorizerApiGatewayAuthorizer"
+              },
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "UpdateBusinessLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "AuthAuthorizerApiGatewayAuthorizer"
+            ]
+          },
+          "ApiGatewayMethodBusinessesIdVarDelete": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "DELETE",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceBusinessesIdVar"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "CUSTOM",
+              "AuthorizerId": {
+                "Ref": "AuthAuthorizerApiGatewayAuthorizer"
+              },
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "DeleteBusinessLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "AuthAuthorizerApiGatewayAuthorizer"
+            ]
+          },
+          "AuthAuthorizerApiGatewayAuthorizer": {
+            "Type": "AWS::ApiGateway::Authorizer",
+            "Properties": {
+              "AuthorizerResultTtlInSeconds": 0,
+              "IdentitySource": "method.request.header.Authorization",
+              "Name": "authAuthorizer",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "AuthorizerUri": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":apigateway:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":lambda:path/2015-03-31/functions/",
+                    {
+                      "Fn::GetAtt": [
+                        "AuthAuthorizerLambdaFunction",
+                        "Arn"
+                      ]
+                    },
+                    "/invocations"
+                  ]
+                ]
+              },
+              "Type": "TOKEN"
+            }
+          },
+          "ApiGatewayDeployment1781982775631": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "StageName": "dev"
+            },
+            "DependsOn": [
+              "ApiGatewayMethodAuthRegisterOptions",
+              "ApiGatewayMethodAuthLoginOptions",
+              "ApiGatewayMethodAuthRecoveryOptions",
+              "ApiGatewayMethodAuthSendDashemailOptions",
+              "ApiGatewayMethodBusinessesOptions",
+              "ApiGatewayMethodBusinessesIdVarOptions",
+              "ApiGatewayMethodAuthRegisterPost",
+              "ApiGatewayMethodAuthLoginPost",
+              "ApiGatewayMethodAuthRecoveryPost",
+              "ApiGatewayMethodAuthSendDashemailPost",
+              "ApiGatewayMethodBusinessesPost",
+              "ApiGatewayMethodBusinessesGet",
+              "ApiGatewayMethodBusinessesIdVarGet",
+              "ApiGatewayMethodBusinessesIdVarPut",
+              "ApiGatewayMethodBusinessesIdVarDelete"
+            ]
+          },
+          "AuthRegisterLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "AuthRegisterLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "AuthLoginLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "AuthLoginLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "AuthRecoveryLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "AuthRecoveryLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "SendEmailLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "SendEmailLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "CreateBusinessLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "CreateBusinessLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "AuthAuthorizerLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "AuthAuthorizerLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "ReadBusinessLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ReadBusinessLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "UpdateBusinessLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "UpdateBusinessLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "DeleteBusinessLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "DeleteBusinessLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "EasyCommerceEventBusDashdevEventBridgeEventBus": {
+            "Type": "AWS::Events::EventBus",
+            "Properties": {
+              "Name": "EasyCommerceEventBus-dev"
+            }
+          },
+          "EasycommercebackenddevgenerateRecommendationrule1EventBridgeRule": {
+            "Type": "AWS::Events::Rule",
+            "DependsOn": "EasyCommerceEventBusDashdevEventBridgeEventBus",
+            "Properties": {
+              "EventBusName": "EasyCommerceEventBus-dev",
+              "EventPattern": {
+                "source": [
+                  "easycommerce.business"
+                ],
+                "detail-type": [
+                  "business.created",
+                  "business.updated"
+                ]
+              },
+              "Name": "easycommerce-backend-dev-generateRecommendation-rule-1",
+              "State": "ENABLED",
+              "Targets": [
+                {
+                  "Arn": {
+                    "Fn::GetAtt": [
+                      "GenerateRecommendationLambdaFunction",
+                      "Arn"
+                    ]
+                  },
+                  "Id": "easycommerce-backend-dev-generateRecommendation-rule-1-target"
+                }
+              ]
+            }
+          },
+          "GenerateRecommendationEventBridgeLambdaPermission1": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "Action": "lambda:InvokeFunction",
+              "FunctionName": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"EasycommercebackenddevgenerateRecommendationrule1EventBridgeRule\"][\"Properties\"][\"Targets\"][0][\"Arn\"]"
+              },
+              "Principal": "events.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  ":",
+                  [
+                    "arn",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    "events",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    {
+                      "Fn::Join": [
+                        "/",
+                        [
+                          "rule",
+                          "EasyCommerceEventBus-dev",
+                          "easycommerce-backend-dev-generateRecommendation-rule-1"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            }
+          },
+          "EasycommercebackenddevgenerateReportrule1EventBridgeRule": {
+            "Type": "AWS::Events::Rule",
+            "DependsOn": "EasyCommerceEventBusDashdevEventBridgeEventBus",
+            "Properties": {
+              "EventBusName": "EasyCommerceEventBus-dev",
+              "EventPattern": {
+                "source": [
+                  "easycommerce.recommendation"
+                ],
+                "detail-type": [
+                  "recommendation.generated"
+                ]
+              },
+              "Name": "easycommerce-backend-dev-generateReport-rule-1",
+              "State": "ENABLED",
+              "Targets": [
+                {
+                  "Arn": {
+                    "Fn::GetAtt": [
+                      "GenerateReportLambdaFunction",
+                      "Arn"
+                    ]
+                  },
+                  "Id": "easycommerce-backend-dev-generateReport-rule-1-target"
+                }
+              ]
+            }
+          },
+          "GenerateReportEventBridgeLambdaPermission1": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "Action": "lambda:InvokeFunction",
+              "FunctionName": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"EasycommercebackenddevgenerateReportrule1EventBridgeRule\"][\"Properties\"][\"Targets\"][0][\"Arn\"]"
+              },
+              "Principal": "events.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  ":",
+                  [
+                    "arn",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    "events",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    {
+                      "Fn::Join": [
+                        "/",
+                        [
+                          "rule",
+                          "EasyCommerceEventBus-dev",
+                          "easycommerce-backend-dev-generateReport-rule-1"
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            }
+          },
+          "ReportsBucket": {
+            "Type": "AWS::S3::Bucket",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "BucketName": "easycommerce-reports-dev-196016474413"
+            }
+          },
+          "UsersTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "TableName": "Users-dev",
+              "BillingMode": "PAY_PER_REQUEST",
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "userId",
+                  "AttributeType": "S"
+                },
+                {
+                  "AttributeName": "email",
+                  "AttributeType": "S"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "userId",
+                  "KeyType": "HASH"
+                }
+              ],
+              "GlobalSecondaryIndexes": [
+                {
+                  "IndexName": "email-index",
+                  "KeySchema": [
+                    {
+                      "AttributeName": "email",
+                      "KeyType": "HASH"
+                    }
+                  ],
+                  "Projection": {
+                    "ProjectionType": "ALL"
+                  }
+                }
+              ]
+            }
+          },
+          "BusinessesTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "TableName": "Businesses-dev",
+              "BillingMode": "PAY_PER_REQUEST",
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "businessId",
+                  "AttributeType": "S"
+                },
+                {
+                  "AttributeName": "userId",
+                  "AttributeType": "S"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "businessId",
+                  "KeyType": "HASH"
+                }
+              ],
+              "GlobalSecondaryIndexes": [
+                {
+                  "IndexName": "userId-index",
+                  "KeySchema": [
+                    {
+                      "AttributeName": "userId",
+                      "KeyType": "HASH"
+                    }
+                  ],
+                  "Projection": {
+                    "ProjectionType": "ALL"
+                  }
+                }
+              ]
+            }
+          },
+          "ReportsTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "TableName": "Reports-dev",
+              "BillingMode": "PAY_PER_REQUEST",
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "reportId",
+                  "AttributeType": "S"
+                },
+                {
+                  "AttributeName": "businessId",
+                  "AttributeType": "S"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "reportId",
+                  "KeyType": "HASH"
+                }
+              ],
+              "GlobalSecondaryIndexes": [
+                {
+                  "IndexName": "businessId-index",
+                  "KeySchema": [
+                    {
+                      "AttributeName": "businessId",
+                      "KeyType": "HASH"
+                    }
+                  ],
+                  "Projection": {
+                    "ProjectionType": "ALL"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            },
+            "Export": {
+              "Name": "sls-easycommerce-backend-dev-ServerlessDeploymentBucketName"
+            }
+          },
+          "AuthAuthorizerLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "AuthAuthorizerLambdaVersionJYlGbPkL0fQJx0UqLCEp6Pz37h1QGnIfno8Sy9m7MM"
+            },
+            "Export": {
+              "Name": "sls-easycommerce-backend-dev-AuthAuthorizerLambdaFunctionQualifiedArn"
+            }
+          },
+          "AuthRegisterLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "AuthRegisterLambdaVersionYk2dgvFfZmpWBHhg4fdVG28RRj5l62Bw7xnEIBzRmI"
+            },
+            "Export": {
+              "Name": "sls-easycommerce-backend-dev-AuthRegisterLambdaFunctionQualifiedArn"
+            }
+          },
+          "AuthLoginLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "AuthLoginLambdaVersionb10RBjRS9JV9Uo06JdfVngRrgocdKrWKcjZPRkfMQM"
+            },
+            "Export": {
+              "Name": "sls-easycommerce-backend-dev-AuthLoginLambdaFunctionQualifiedArn"
+            }
+          },
+          "AuthRecoveryLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "AuthRecoveryLambdaVersion8ewWQ5aGVoWoSL5fUVef0xx6zWbtnYwhpCSkAgJ2DI"
+            },
+            "Export": {
+              "Name": "sls-easycommerce-backend-dev-AuthRecoveryLambdaFunctionQualifiedArn"
+            }
+          },
+          "SendEmailLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "SendEmailLambdaVersionrkqPS111EGRKmgRKRRQvbH9QvF4TGgAV3L0oK4rQne0"
+            },
+            "Export": {
+              "Name": "sls-easycommerce-backend-dev-SendEmailLambdaFunctionQualifiedArn"
+            }
+          },
+          "CreateBusinessLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "CreateBusinessLambdaVersionqvcIHP08I3bM0b4G3QybbILct4imQsqpaXYJ2b3O4"
+            },
+            "Export": {
+              "Name": "sls-easycommerce-backend-dev-CreateBusinessLambdaFunctionQualifiedArn"
+            }
+          },
+          "ReadBusinessLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ReadBusinessLambdaVersionH16JuBYLMKpOTf0YrfwR33Jq4IQWPvJOpoe2nCf18VQ"
+            },
+            "Export": {
+              "Name": "sls-easycommerce-backend-dev-ReadBusinessLambdaFunctionQualifiedArn"
+            }
+          },
+          "UpdateBusinessLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "UpdateBusinessLambdaVersionr0xonWoFcDDIDIdWXm5X26iEgPmu0xljJamnmDslzM"
+            },
+            "Export": {
+              "Name": "sls-easycommerce-backend-dev-UpdateBusinessLambdaFunctionQualifiedArn"
+            }
+          },
+          "DeleteBusinessLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "DeleteBusinessLambdaVersionU6amQ5xGKRaQwN1ruxUmJ7W2PaOvJGj5yviA4pvQNc"
+            },
+            "Export": {
+              "Name": "sls-easycommerce-backend-dev-DeleteBusinessLambdaFunctionQualifiedArn"
+            }
+          },
+          "GenerateRecommendationLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "GenerateRecommendationLambdaVersionDuQ64XPkHmtnIKbtgOJRZaQynzb4FSDTcjq5NZZGYs"
+            },
+            "Export": {
+              "Name": "sls-easycommerce-backend-dev-GenerateRecommendationLambdaFunctionQualifiedArn"
+            }
+          },
+          "GenerateReportLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "GenerateReportLambdaVersionx1es4RVaIFxxcQpSvNXExule4AnmOdtPzx9dpKADKw"
+            },
+            "Export": {
+              "Name": "sls-easycommerce-backend-dev-GenerateReportLambdaFunctionQualifiedArn"
+            }
+          },
+          "ServiceEndpoint": {
+            "Description": "URL of the service endpoint",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/dev"
+                ]
+              ]
+            },
+            "Export": {
+              "Name": "sls-easycommerce-backend-dev-ServiceEndpoint"
+            }
+          }
+        }
+      },
+      "coreCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "ServerlessDeploymentBucketPolicy": {
+            "Type": "AWS::S3::BucketPolicy",
+            "Properties": {
+              "Bucket": {
+                "Ref": "ServerlessDeploymentBucket"
+              },
+              "PolicyDocument": {
+                "Statement": [
+                  {
+                    "Action": "s3:*",
+                    "Effect": "Deny",
+                    "Principal": "*",
+                    "Resource": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            },
+                            "/*"
+                          ]
+                        ]
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            }
+                          ]
+                        ]
+                      }
+                    ],
+                    "Condition": {
+                      "Bool": {
+                        "aws:SecureTransport": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "plugins": [
+      "serverless-python-requirements",
+      "serverless-dotenv-plugin"
+    ],
+    "pluginsData": {},
+    "functions": {
+      "authAuthorizer": {
+        "handler": "src/functions/auth/auth_authorizer.handler",
+        "events": [],
+        "name": "easycommerce-backend-dev-authAuthorizer",
+        "package": {},
+        "memory": 1024,
+        "timeout": 30,
+        "runtime": "python3.11",
+        "vpc": {},
+        "versionLogicalId": "AuthAuthorizerLambdaVersionJYlGbPkL0fQJx0UqLCEp6Pz37h1QGnIfno8Sy9m7MM"
+      },
+      "authRegister": {
+        "handler": "src/functions/auth/auth_register.handler",
+        "events": [
+          {
+            "http": {
+              "path": "auth/register",
+              "method": "post",
+              "cors": {
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "POST"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent",
+                  "X-Amzn-Trace-Id"
+                ],
+                "allowCredentials": false
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "easycommerce-backend-dev-authRegister",
+        "package": {},
+        "memory": 1024,
+        "timeout": 30,
+        "runtime": "python3.11",
+        "vpc": {},
+        "versionLogicalId": "AuthRegisterLambdaVersionYk2dgvFfZmpWBHhg4fdVG28RRj5l62Bw7xnEIBzRmI"
+      },
+      "authLogin": {
+        "handler": "src/functions/auth/auth_login.handler",
+        "events": [
+          {
+            "http": {
+              "path": "auth/login",
+              "method": "post",
+              "cors": {
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "POST"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent",
+                  "X-Amzn-Trace-Id"
+                ],
+                "allowCredentials": false
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "easycommerce-backend-dev-authLogin",
+        "package": {},
+        "memory": 1024,
+        "timeout": 30,
+        "runtime": "python3.11",
+        "vpc": {},
+        "versionLogicalId": "AuthLoginLambdaVersionb10RBjRS9JV9Uo06JdfVngRrgocdKrWKcjZPRkfMQM"
+      },
+      "authRecovery": {
+        "handler": "src/functions/auth/auth_recovery.handler",
+        "events": [
+          {
+            "http": {
+              "path": "auth/recovery",
+              "method": "post",
+              "cors": {
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "POST"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent",
+                  "X-Amzn-Trace-Id"
+                ],
+                "allowCredentials": false
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "easycommerce-backend-dev-authRecovery",
+        "package": {},
+        "memory": 1024,
+        "timeout": 30,
+        "runtime": "python3.11",
+        "vpc": {},
+        "versionLogicalId": "AuthRecoveryLambdaVersion8ewWQ5aGVoWoSL5fUVef0xx6zWbtnYwhpCSkAgJ2DI"
+      },
+      "sendEmail": {
+        "handler": "src/functions/auth/send_email.handler",
+        "events": [
+          {
+            "http": {
+              "path": "auth/send-email",
+              "method": "post",
+              "cors": {
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "POST"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent",
+                  "X-Amzn-Trace-Id"
+                ],
+                "allowCredentials": false
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "easycommerce-backend-dev-sendEmail",
+        "package": {},
+        "memory": 1024,
+        "timeout": 30,
+        "runtime": "python3.11",
+        "vpc": {},
+        "versionLogicalId": "SendEmailLambdaVersionrkqPS111EGRKmgRKRRQvbH9QvF4TGgAV3L0oK4rQne0"
+      },
+      "createBusiness": {
+        "handler": "src/functions/business/create_business.handler",
+        "events": [
+          {
+            "http": {
+              "path": "businesses",
+              "method": "post",
+              "cors": {
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "POST"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent",
+                  "X-Amzn-Trace-Id"
+                ],
+                "allowCredentials": false
+              },
+              "authorizer": {
+                "type": "token",
+                "name": "authAuthorizer",
+                "arn": {
+                  "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"AuthAuthorizerLambdaPermissionApiGateway\"][\"Properties\"][\"FunctionName\"]"
+                },
+                "managedExternally": false,
+                "resultTtlInSeconds": 0,
+                "identitySource": "method.request.header.Authorization",
+                "claims": []
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "easycommerce-backend-dev-createBusiness",
+        "package": {},
+        "memory": 1024,
+        "timeout": 30,
+        "runtime": "python3.11",
+        "vpc": {},
+        "versionLogicalId": "CreateBusinessLambdaVersionqvcIHP08I3bM0b4G3QybbILct4imQsqpaXYJ2b3O4"
+      },
+      "readBusiness": {
+        "handler": "src/functions/business/read_business.handler",
+        "events": [
+          {
+            "http": {
+              "path": "businesses",
+              "method": "get",
+              "cors": {
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "GET"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent",
+                  "X-Amzn-Trace-Id"
+                ],
+                "allowCredentials": false
+              },
+              "authorizer": {
+                "type": "token",
+                "name": "authAuthorizer",
+                "arn": {
+                  "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"AuthAuthorizerLambdaPermissionApiGateway\"][\"Properties\"][\"FunctionName\"]"
+                },
+                "managedExternally": false,
+                "resultTtlInSeconds": 0,
+                "identitySource": "method.request.header.Authorization",
+                "claims": []
+              },
+              "integration": "AWS_PROXY"
+            }
+          },
+          {
+            "http": {
+              "path": "businesses/{id}",
+              "method": "get",
+              "cors": {
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "GET"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent",
+                  "X-Amzn-Trace-Id"
+                ],
+                "allowCredentials": false
+              },
+              "authorizer": {
+                "type": "token",
+                "name": "authAuthorizer",
+                "arn": {
+                  "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"AuthAuthorizerLambdaPermissionApiGateway\"][\"Properties\"][\"FunctionName\"]"
+                },
+                "managedExternally": false,
+                "resultTtlInSeconds": 0,
+                "identitySource": "method.request.header.Authorization",
+                "claims": []
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "easycommerce-backend-dev-readBusiness",
+        "package": {},
+        "memory": 1024,
+        "timeout": 30,
+        "runtime": "python3.11",
+        "vpc": {},
+        "versionLogicalId": "ReadBusinessLambdaVersionH16JuBYLMKpOTf0YrfwR33Jq4IQWPvJOpoe2nCf18VQ"
+      },
+      "updateBusiness": {
+        "handler": "src/functions/business/update_business.handler",
+        "events": [
+          {
+            "http": {
+              "path": "businesses/{id}",
+              "method": "put",
+              "cors": {
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "PUT"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent",
+                  "X-Amzn-Trace-Id"
+                ],
+                "allowCredentials": false
+              },
+              "authorizer": {
+                "type": "token",
+                "name": "authAuthorizer",
+                "arn": {
+                  "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"AuthAuthorizerLambdaPermissionApiGateway\"][\"Properties\"][\"FunctionName\"]"
+                },
+                "managedExternally": false,
+                "resultTtlInSeconds": 0,
+                "identitySource": "method.request.header.Authorization",
+                "claims": []
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "easycommerce-backend-dev-updateBusiness",
+        "package": {},
+        "memory": 1024,
+        "timeout": 30,
+        "runtime": "python3.11",
+        "vpc": {},
+        "versionLogicalId": "UpdateBusinessLambdaVersionr0xonWoFcDDIDIdWXm5X26iEgPmu0xljJamnmDslzM"
+      },
+      "deleteBusiness": {
+        "handler": "src/functions/business/delete_business.handler",
+        "events": [
+          {
+            "http": {
+              "path": "businesses/{id}",
+              "method": "delete",
+              "cors": {
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "DELETE"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent",
+                  "X-Amzn-Trace-Id"
+                ],
+                "allowCredentials": false
+              },
+              "authorizer": {
+                "type": "token",
+                "name": "authAuthorizer",
+                "arn": {
+                  "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"AuthAuthorizerLambdaPermissionApiGateway\"][\"Properties\"][\"FunctionName\"]"
+                },
+                "managedExternally": false,
+                "resultTtlInSeconds": 0,
+                "identitySource": "method.request.header.Authorization",
+                "claims": []
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "easycommerce-backend-dev-deleteBusiness",
+        "package": {},
+        "memory": 1024,
+        "timeout": 30,
+        "runtime": "python3.11",
+        "vpc": {},
+        "versionLogicalId": "DeleteBusinessLambdaVersionU6amQ5xGKRaQwN1ruxUmJ7W2PaOvJGj5yviA4pvQNc"
+      },
+      "generateRecommendation": {
+        "handler": "src/functions/recommendation/generate_recommendation.handler",
+        "events": [
+          {
+            "eventBridge": {
+              "eventBus": "EasyCommerceEventBus-dev",
+              "pattern": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"EasycommercebackenddevgenerateRecommendationrule1EventBridgeRule\"][\"Properties\"][\"EventPattern\"]"
+              }
+            }
+          }
+        ],
+        "name": "easycommerce-backend-dev-generateRecommendation",
+        "package": {},
+        "memory": 1024,
+        "timeout": 30,
+        "runtime": "python3.11",
+        "vpc": {},
+        "versionLogicalId": "GenerateRecommendationLambdaVersionDuQ64XPkHmtnIKbtgOJRZaQynzb4FSDTcjq5NZZGYs"
+      },
+      "generateReport": {
+        "handler": "src/functions/report/generate_report.handler",
+        "events": [
+          {
+            "eventBridge": {
+              "eventBus": "EasyCommerceEventBus-dev",
+              "pattern": {
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"EasycommercebackenddevgenerateReportrule1EventBridgeRule\"][\"Properties\"][\"EventPattern\"]"
+              }
+            }
+          }
+        ],
+        "name": "easycommerce-backend-dev-generateReport",
+        "package": {},
+        "memory": 1024,
+        "timeout": 30,
+        "runtime": "python3.11",
+        "vpc": {},
+        "versionLogicalId": "GenerateReportLambdaVersionx1es4RVaIFxxcQpSvNXExule4AnmOdtPzx9dpKADKw"
+      }
+    },
+    "resources": {
+      "Resources": {
+        "ReportsBucket": {
+          "Type": "AWS::S3::Bucket",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "BucketName": "easycommerce-reports-dev-196016474413"
+          }
+        },
+        "UsersTable": {
+          "Type": "AWS::DynamoDB::Table",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "TableName": "Users-dev",
+            "BillingMode": "PAY_PER_REQUEST",
+            "AttributeDefinitions": [
+              {
+                "AttributeName": "userId",
+                "AttributeType": "S"
+              },
+              {
+                "AttributeName": "email",
+                "AttributeType": "S"
+              }
+            ],
+            "KeySchema": [
+              {
+                "AttributeName": "userId",
+                "KeyType": "HASH"
+              }
+            ],
+            "GlobalSecondaryIndexes": [
+              {
+                "IndexName": "email-index",
+                "KeySchema": [
+                  {
+                    "AttributeName": "email",
+                    "KeyType": "HASH"
+                  }
+                ],
+                "Projection": {
+                  "ProjectionType": "ALL"
+                }
+              }
+            ]
+          }
+        },
+        "BusinessesTable": {
+          "Type": "AWS::DynamoDB::Table",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "TableName": "Businesses-dev",
+            "BillingMode": "PAY_PER_REQUEST",
+            "AttributeDefinitions": [
+              {
+                "AttributeName": "businessId",
+                "AttributeType": "S"
+              },
+              {
+                "AttributeName": "userId",
+                "AttributeType": "S"
+              }
+            ],
+            "KeySchema": [
+              {
+                "AttributeName": "businessId",
+                "KeyType": "HASH"
+              }
+            ],
+            "GlobalSecondaryIndexes": [
+              {
+                "IndexName": "userId-index",
+                "KeySchema": [
+                  {
+                    "AttributeName": "userId",
+                    "KeyType": "HASH"
+                  }
+                ],
+                "Projection": {
+                  "ProjectionType": "ALL"
+                }
+              }
+            ]
+          }
+        },
+        "ReportsTable": {
+          "Type": "AWS::DynamoDB::Table",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "TableName": "Reports-dev",
+            "BillingMode": "PAY_PER_REQUEST",
+            "AttributeDefinitions": [
+              {
+                "AttributeName": "reportId",
+                "AttributeType": "S"
+              },
+              {
+                "AttributeName": "businessId",
+                "AttributeType": "S"
+              }
+            ],
+            "KeySchema": [
+              {
+                "AttributeName": "reportId",
+                "KeyType": "HASH"
+              }
+            ],
+            "GlobalSecondaryIndexes": [
+              {
+                "IndexName": "businessId-index",
+                "KeySchema": [
+                  {
+                    "AttributeName": "businessId",
+                    "KeyType": "HASH"
+                  }
+                ],
+                "Projection": {
+                  "ProjectionType": "ALL"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "Outputs": {}
+    },
+    "configValidationMode": "warn",
+    "serviceFilename": "serverless.yml",
+    "initialServerlessConfig": {
+      "service": "easycommerce-backend",
+      "frameworkVersion": "3",
+      "plugins": {
+        "$ref": "$[\"service\"][\"plugins\"]"
+      },
+      "provider": {
+        "$ref": "$[\"service\"][\"provider\"]"
+      },
+      "functions": {
+        "$ref": "$[\"service\"][\"functions\"]"
+      },
+      "resources": {
+        "$ref": "$[\"service\"][\"resources\"]"
+      }
+    },
+    "layers": {},
+    "isDashboardMonitoringPreconfigured": false,
+    "artifact": "C:\\Users\\user\\Documents\\Hack Cloud\\hack-20261\\backend\\.serverless\\easycommerce-backend.zip"
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/easycommerce-backend/dev/1781982803877-2026-06-20T19:13:23.877Z",
+    "artifact": "easycommerce-backend.zip"
+  }
+}
