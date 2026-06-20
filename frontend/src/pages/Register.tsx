@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { authService } from "../services/auth.service";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -19,15 +18,8 @@ export default function Register() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`${API_URL}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Error al registrarse");
-      localStorage.setItem("token", data.token);
-      navigate("/dashboard");
+      await authService.register({ name, email, password });
+      navigate("/login");
     } catch (err: any) {
       setError(err.message);
     } finally {

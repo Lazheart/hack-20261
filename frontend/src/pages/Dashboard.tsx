@@ -1,27 +1,7 @@
-import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-
-const API_URL = import.meta.env.VITE_API_URL;
-
-interface Business {
-  nombre: string;
-  rubro: string;
-  direccion: string;
-  tiene_redes: string;
-  acepta_pagos_digitales: string;
-  inventario_digital: string;
-}
-
-interface Report {
-  businessId: string;
-  nombre: string;
-  digitalMaturityScore: number;
-  maturityLevel: string;
-  summary: string;
-  recommendations: any[];
-  priorityActions: string[];
-  quickWins: string[];
-}
+import { useState, useRef, useEffect } from "react";
+import { useAuth } from "../hooks/useAuth";
+import { businessService } from "../services/business.service";
+import  type { Business, Report } from "../types";
 
 export default function Dashboard() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
@@ -31,9 +11,21 @@ export default function Dashboard() {
   const [total, setTotal] = useState(0);
   const [fileName, setFileName] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
-
-  const token = localStorage.getItem("token");
+  
+  const { logout } = useAuth();
+  
+  useEffect(() => {
+    const loadBusinesses = async () => {
+      try {
+        const data = await businessService.getAll();
+        setReports(data as unknown as Report[]);
+        if (data.length > 0) setTotal(data.length);
+      } catch (err) {
+        console.error("Error cargando negocios:", err);
+      }
+    };
+    loadBusinesses();
+  }, []);
 
   const parseCSV = (text: string): Business[] => {
     const lines = text.trim().split("\n");
@@ -69,15 +61,7 @@ export default function Dashboard() {
     for (let i = 0; i < businesses.length; i++) {
       const business = businesses[i];
       try {
-        const res = await fetch(`${API_URL}/businesses`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(business),
-        });
-        const data = await res.json();
+        const data = await businessService.create(business);
         setReports((prev) => [...prev, { ...data, nombre: business.nombre }]);
       } catch (err) {
         console.error("Error:", err);
@@ -101,8 +85,7 @@ export default function Dashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
+    logout();
   };
 
   return (
