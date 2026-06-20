@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "https://89vw70b8uf.execute-api.us-east-1.amazonaws.com/dev";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Register() {
   const [name, setName] = useState("");
