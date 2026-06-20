@@ -1,21 +1,13 @@
-org: andyberru
-service: api-alumnos
+org: ${ORG_NAME}
+service: easycommerce
 
 provider:
   name: aws
   runtime: python3.12
   timeout: 30  
   iam:
-    role: arn:aws:iam::{$userid}:role/LabRole
+    role: arn:aws:iam::${ID_AWS}:role/LabRole
 
-functions:
-  listar:
-    handler: ListarAlumnos.lambda_handler
-    events:
-      - http:
-          path: /alumnos/listar
-          method: post
-          cors: true
-          integration: lambda
+
 
 
