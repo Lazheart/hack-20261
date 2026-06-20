@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = "https://89vw70b8uf.execute-api.us-east-1.amazonaws.com/dev";
 
@@ -29,8 +30,8 @@ export default function App() {
   const [progress, setProgress] = useState(0);
   const [total, setTotal] = useState(0);
   const [fileName, setFileName] = useState("");
-  const [started, setStarted] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   const parseCSV = (text: string): Business[] => {
     const lines = text.trim().split("\n");
@@ -58,7 +59,6 @@ export default function App() {
 
   const processBusinesses = async () => {
     if (businesses.length === 0) return;
-    setStarted(true);
     setProcessing(true);
     setProgress(0);
     setTotal(businesses.length);
@@ -101,9 +101,10 @@ export default function App() {
       {/* NAV */}
       <nav style={{ background: "white", padding: "16px 40px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", position: "sticky", top: 0, zIndex: 100 }}>
         <span style={{ fontSize: "22px", fontWeight: "800", color: "#16a34a" }}>🏪 EasyCommerce</span>
-        <div style={{ display: "flex", gap: "32px", alignItems: "center" }}>
+        <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
           <a href="#como" style={{ color: "#64748b", textDecoration: "none", fontSize: "15px" }}>Cómo Funciona</a>
-          <a href="#upload" style={{ background: "#f97316", color: "white", padding: "10px 20px", borderRadius: "8px", textDecoration: "none", fontWeight: "bold", fontSize: "14px" }}>Comenzar Gratis</a>
+          <span onClick={() => navigate("/login")} style={{ color: "#64748b", textDecoration: "none", fontSize: "15px", cursor: "pointer" }}>Iniciar Sesión</span>
+          <span onClick={() => navigate("/register")} style={{ background: "#f97316", color: "white", padding: "10px 20px", borderRadius: "8px", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}>Comenzar Gratis</span>
         </div>
       </nav>
 
@@ -120,7 +121,7 @@ export default function App() {
             Sube tus datos en CSV y nuestra IA genera un diagnóstico personalizado, recomendaciones de herramientas digitales y un roadmap semana a semana para cada negocio.
           </p>
           <button
-            onClick={() => fileRef.current?.click()}
+            onClick={() => navigate("/register")}
             style={{ background: "#f97316", color: "white", border: "none", padding: "16px 36px", borderRadius: "12px", fontSize: "18px", fontWeight: "bold", cursor: "pointer", boxShadow: "0 4px 14px rgba(249,115,22,0.4)" }}
           >
             🚀 Comenzar Gratis — Sube tu CSV
@@ -165,6 +166,7 @@ export default function App() {
             >
               Seleccionar CSV
             </button>
+
             {fileName && (
               <p style={{ color: "#16a34a", fontWeight: "bold", margin: "8px 0" }}>✅ {fileName} — {businesses.length} negocios cargados</p>
             )}
@@ -189,7 +191,6 @@ export default function App() {
             )}
           </div>
 
-          {/* CSV Example */}
           <div style={{ marginTop: "24px", background: "#0f172a", borderRadius: "12px", padding: "20px" }}>
             <p style={{ color: "#94a3b8", fontSize: "12px", marginBottom: "8px" }}>📋 Ejemplo de CSV:</p>
             <pre style={{ color: "#86efac", fontSize: "11px", margin: 0, overflow: "auto" }}>
