@@ -102,7 +102,7 @@ export default function App() {
       <nav style={{ background: "white", padding: "16px 40px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", position: "sticky", top: 0, zIndex: 100 }}>
         <span style={{ fontSize: "22px", fontWeight: "800", color: "#16a34a" }}>🏪 EasyCommerce</span>
         <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
-          <a href="#como" style={{ color: "#64748b", textDecoration: "none", fontSize: "15px" }}>Cómo Funciona</a>
+          <span onClick={() => navigate("/como-funciona")} style={{ color: "#64748b", fontSize: "15px", cursor: "pointer" }}>Cómo Funciona</span>
           <span onClick={() => navigate("/login")} style={{ color: "#64748b", textDecoration: "none", fontSize: "15px", cursor: "pointer" }}>Iniciar Sesión</span>
           <span onClick={() => navigate("/register")} style={{ background: "#f97316", color: "white", padding: "10px 20px", borderRadius: "8px", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}>Comenzar Gratis</span>
         </div>
