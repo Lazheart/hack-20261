@@ -1,55 +1,20 @@
-╭─lazheart@kon ~/Desktop/hack ‹main●› 
-╰─$ tree .
-.
-├── backend
-│   ├── deploy.sh
-│   ├── serverless.yml
-│   └── src
-│       ├── events
-│       │   ├── auth_events.py
-│       │   └── business_events.py
-│       ├── functions
-│       │   ├── auth
-│       │   │   ├── auth_authorizer.py
-│       │   │   ├── auth_login.py
-│       │   │   ├── auth_recovery.py
-│       │   │   ├── auth_register.py
-│       │   │   └── send_email.py
-│       │   └── business
-│       │       ├── create_business.py
-│       │       ├── get_business.py
-│       │       └── update_business.py
-│       ├── services
-│       │   ├── auth
-│       │   │   ├── login.py
-│       │   │   └── register.py
-│       │   └── business
-│       └── templates
-│           ├── recovery.html
-│           └── welcome.html
-├── docs
-├── frontend
-│   ├── eslint.config.js
-│   ├── index.html
-│   ├── package.json
-│   ├── public
-│   │   ├── favicon.svg
-│   │   └── icons.svg
-│   ├── README.md
-│   ├── src
-│   │   ├── App.css
-│   │   ├── App.tsx
-│   │   ├── assets
-│   │   │   ├── hero.png
-│   │   │   ├── react.svg
-│   │   │   └── vite.svg
-│   │   ├── index.css
-│   │   └── main.tsx
-│   ├── tsconfig.app.json
-│   ├── tsconfig.json
-│   ├── tsconfig.node.json
-│   └── vite.config.ts
-├── LICENSE
-└── README.md
+import boto3
+import json
+import os
 
-16 directories, 35 files
+def publish_event(source, detail_type, payload):
+    client = boto3.client('events')
+    try:
+        client.put_events(Entries=[{
+            'Source': source,
+            'DetailType': detail_type,
+            'Detail': json.dumps(payload),
+            'EventBusName': os.environ['EVENT_BUS_NAME']
+        }])
+        print(f"[INFO] Event published: {detail_type}")
+    except Exception as e:
+        print(f"[ERROR] Failed to publish event {detail_type}: {str(e)}")
+        raise
+
+def publish_user_registered(user_data):
+    publish_event("easycommerce.auth", "auth.user.registered", user_data)

@@ -1,0 +1,3 @@
+USERS_TABLE = "Users"
+BUSINESSES_TABLE = "Businesses"
+REPORTS_TABLE = "Reports"
