@@ -13,11 +13,11 @@ provider:
   environment:
     API_KEY_LLM: ${env:API_KEY_LLM}
 
-    USERS_TABLE: EasyCommerceUsers
-    BUSINESSES_TABLE: EasyCommerceBusinesses
-    REPORTS_TABLE: EasyCommerceReports
+    USERS_TABLE: ${env:USERS_TABLE}
+    BUSINESSES_TABLE: ${env:BUSINESSES_TABLE}
+    REPORTS_TABLE: ${env:REPORTS_TABLE}
 
-    EVENT_BUS_NAME: easycommerce-bus
+    EVENT_BUS_NAME: ${env:EVENT_BUS_NAME}
 
 functions:
 
