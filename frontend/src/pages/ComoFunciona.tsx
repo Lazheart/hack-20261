@@ -4,9 +4,8 @@ export default function ComoFunciona() {
   const navigate = useNavigate();
 
   return (
-    <div style={{ fontFamily: "'Segoe UI', sans-serif", background: "#f8fafc", minHeight: "100vh" }}>
+    <div style={{ fontFamily: "'Inter', sans-serif", background: "#f8fafc", minHeight: "100vh" }}>
 
-      {/* NAV */}
       <nav style={{ background: "white", padding: "16px 40px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", position: "sticky", top: 0, zIndex: 100 }}>
         <span onClick={() => navigate("/")} style={{ fontSize: "22px", fontWeight: "800", color: "#16a34a", cursor: "pointer" }}>EasyCommerce</span>
         <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
@@ -15,41 +14,21 @@ export default function ComoFunciona() {
         </div>
       </nav>
 
-      {/* HERO */}
       <div style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)", padding: "60px 40px", textAlign: "center" }}>
-        <h1 style={{ fontSize: "40px", fontWeight: "900", color: "#0f172a", margin: "0 0 16px" }}>
-          Cómo usar EasyCommerce
-        </h1>
+        <h1 style={{ fontSize: "40px", fontWeight: "900", color: "#0f172a", margin: "0 0 16px" }}>Cómo usar EasyCommerce</h1>
         <p style={{ fontSize: "18px", color: "#64748b", maxWidth: "600px", margin: "0 auto", lineHeight: "1.7" }}>
-          En tres simples pasos, obtén un diagnóstico completo y un plan de digitalización personalizado para cada uno de tus negocios.
+          En cuatro simples pasos, obtén un diagnóstico completo y un plan de digitalización personalizado para cada uno de tus negocios.
         </p>
       </div>
 
       <div style={{ maxWidth: "800px", margin: "0 auto", padding: "60px 20px" }}>
 
-        {/* PASOS */}
         <div style={{ display: "grid", gap: "24px", marginBottom: "48px" }}>
           {[
-            {
-              paso: "01",
-              titulo: "Crea tu cuenta",
-              desc: "Regístrate gratis con tu nombre, correo y contraseña. No necesitas tarjeta de crédito ni conocimientos técnicos.",
-            },
-            {
-              paso: "02",
-              titulo: "Prepara tu archivo CSV",
-              desc: "Crea un archivo CSV con la información de tus negocios. Cada fila es un negocio. Las columnas que necesitas son: nombre, rubro, dirección, si tiene redes sociales, si acepta pagos digitales y si lleva inventario digital.",
-            },
-            {
-              paso: "03",
-              titulo: "Sube el CSV y analiza",
-              desc: "Desde tu panel, sube el archivo CSV y haz click en Analizar. Nuestra inteligencia artificial procesará cada negocio de forma automática y generará un diagnóstico personalizado para cada uno.",
-            },
-            {
-              paso: "04",
-              titulo: "Revisa los resultados",
-              desc: "Verás los resultados en tiempo real conforme se van procesando. Cada negocio tendrá su score de digitalización, las herramientas que necesita y un plan de acción semana a semana.",
-            },
+            { paso: "01", titulo: "Crea tu cuenta", desc: "Regístrate gratis con tu nombre, correo y contraseña. No necesitas tarjeta de crédito ni conocimientos técnicos." },
+            { paso: "02", titulo: "Prepara tu archivo CSV", desc: "Crea un archivo CSV con la información de tus negocios. Cada fila es un negocio con su nombre, rubro, dirección y nivel actual de digitalización." },
+            { paso: "03", titulo: "Sube el CSV y analiza", desc: "Desde tu panel, sube el archivo CSV y haz click en Analizar. Nuestra inteligencia artificial procesará cada negocio de forma automática." },
+            { paso: "04", titulo: "Revisa los resultados", desc: "Verás los resultados en tiempo real conforme se van procesando. Cada negocio tendrá su score, herramientas recomendadas y plan de acción." },
           ].map((item, i) => (
             <div key={i} style={{ background: "white", borderRadius: "16px", padding: "32px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", display: "flex", gap: "24px", alignItems: "flex-start" }}>
               <div style={{ background: "#dcfce7", color: "#16a34a", borderRadius: "12px", padding: "12px 16px", fontWeight: "900", fontSize: "22px", minWidth: "64px", textAlign: "center" }}>
@@ -63,25 +42,46 @@ export default function ComoFunciona() {
           ))}
         </div>
 
-        {/* EJEMPLO CSV */}
         <div style={{ background: "white", borderRadius: "16px", padding: "32px", marginBottom: "32px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
-          <h2 style={{ fontSize: "22px", fontWeight: "800", color: "#0f172a", marginBottom: "8px" }}>Ejemplo de archivo CSV</h2>
-          <p style={{ color: "#64748b", fontSize: "15px", marginBottom: "20px", lineHeight: "1.7" }}>
-            Así debe verse tu archivo CSV. Puedes crearlo en Excel o Google Sheets y exportarlo como CSV.
-          </p>
-          <div style={{ background: "#0f172a", borderRadius: "12px", padding: "20px" }}>
-            <pre style={{ color: "#86efac", fontSize: "12px", margin: 0, overflow: "auto", lineHeight: "1.8" }}>
-{`nombre,rubro,direccion,tiene_redes,acepta_pagos_digitales,inventario_digital
-Bodega Don Carlos,abarrotes,Av. Universitaria 234 Ate,no,no,no
-Pollería El Gordo,restaurante,Jr. Lima 45 Miraflores,facebook,yape,no
-Salón Belinda,peluquería,Av. Túpac 89 SJL,instagram,no,no
-Farmacia San José,farmacia,Av. Callao 123,facebook,yape,si
-Librería El Saber,librería,Jr. Cusco 45 Lima,no,no,no`}
-            </pre>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
+            <div>
+              <h2 style={{ fontSize: "22px", fontWeight: "800", color: "#0f172a", margin: "0 0 6px" }}>Ejemplo de archivo CSV</h2>
+              <p style={{ color: "#64748b", fontSize: "15px", margin: 0 }}>Puedes crearlo en Excel o Google Sheets y exportarlo como CSV.</p>
+            </div>
+            <div style={{ background: "#dcfce7", color: "#16a34a", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", fontWeight: "700" }}>
+              Formato requerido
+            </div>
           </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "8px", marginBottom: "8px" }}>
+            {["nombre", "rubro", "direccion", "tiene_redes", "acepta_pagos_digitales", "inventario_digital"].map((col, i) => (
+              <div key={i} style={{ background: "#16a34a", color: "white", padding: "10px 8px", borderRadius: "8px", fontSize: "11px", fontWeight: "700", textAlign: "center" }}>
+                {col}
+              </div>
+            ))}
+          </div>
+
+          {[
+            ["Bodega Don Carlos", "abarrotes", "Av. Universitaria 234", "no", "no", "no"],
+            ["Pollería El Gordo", "restaurante", "Jr. Lima 45 Miraflores", "facebook", "yape", "no"],
+            ["Salón Belinda", "peluquería", "Av. Túpac 89 SJL", "instagram", "no", "no"],
+            ["Farmacia San José", "farmacia", "Av. Callao 123", "facebook", "yape", "si"],
+            ["Librería El Saber", "librería", "Jr. Cusco 45 Lima", "no", "no", "no"],
+          ].map((row, i) => (
+            <div key={i} style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "8px", marginBottom: "6px" }}>
+              {row.map((cell, j) => (
+                <div key={j} style={{ background: i % 2 === 0 ? "#f8fafc" : "white", border: "1px solid #e2e8f0", padding: "10px 8px", borderRadius: "6px", fontSize: "11px", color: cell === "no" ? "#ef4444" : cell === "si" ? "#16a34a" : "#0f172a", fontWeight: cell === "no" || cell === "si" ? "700" : "400", textAlign: "center" }}>
+                  {cell}
+                </div>
+              ))}
+            </div>
+          ))}
+
+          <p style={{ color: "#94a3b8", fontSize: "12px", marginTop: "16px", textAlign: "center" }}>
+            Los valores "si" y "no" indican si el negocio cuenta con esa característica actualmente.
+          </p>
         </div>
 
-        {/* QUE RECIBES */}
         <div style={{ background: "white", borderRadius: "16px", padding: "32px", marginBottom: "48px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
           <h2 style={{ fontSize: "22px", fontWeight: "800", color: "#0f172a", marginBottom: "24px" }}>Qué recibes por cada negocio</h2>
           <div style={{ display: "grid", gap: "16px" }}>
@@ -103,11 +103,8 @@ Librería El Saber,librería,Jr. Cusco 45 Lima,no,no,no`}
           </div>
         </div>
 
-        {/* CTA */}
         <div style={{ background: "linear-gradient(135deg, #16a34a, #15803d)", borderRadius: "16px", padding: "48px", textAlign: "center" }}>
-          <h2 style={{ fontSize: "28px", fontWeight: "800", color: "white", margin: "0 0 16px" }}>
-            Listo para empezar
-          </h2>
+          <h2 style={{ fontSize: "28px", fontWeight: "800", color: "white", margin: "0 0 16px" }}>Listo para empezar</h2>
           <p style={{ color: "#dcfce7", fontSize: "16px", margin: "0 0 32px", lineHeight: "1.7" }}>
             Crea tu cuenta gratis y analiza hasta 25 negocios en minutos.
           </p>
@@ -121,10 +118,10 @@ Librería El Saber,librería,Jr. Cusco 45 Lima,no,no,no`}
 
       </div>
 
-      {/* FOOTER */}
       <footer style={{ background: "#0f172a", color: "#94a3b8", textAlign: "center", padding: "32px", fontSize: "13px" }}>
         <p style={{ margin: 0 }}>2026 EasyCommerce AI — Transformación Digital para MYPES peruanas</p>
       </footer>
+
     </div>
   );
 }

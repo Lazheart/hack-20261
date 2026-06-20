@@ -63,7 +63,6 @@ export default function App() {
     setProgress(0);
     setTotal(businesses.length);
     setReports([]);
-
     for (let i = 0; i < businesses.length; i++) {
       const business = businesses[i];
       try {
@@ -96,14 +95,14 @@ export default function App() {
   };
 
   return (
-    <div style={{ fontFamily: "'Segoe UI', sans-serif", background: "#f8fafc", minHeight: "100vh" }}>
+    <div style={{ fontFamily: "'Inter', sans-serif", background: "#f8fafc", minHeight: "100vh" }}>
 
       {/* NAV */}
       <nav style={{ background: "white", padding: "16px 40px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", position: "sticky", top: 0, zIndex: 100 }}>
-        <span style={{ fontSize: "22px", fontWeight: "800", color: "#16a34a" }}>🏪 EasyCommerce</span>
+        <span style={{ fontSize: "22px", fontWeight: "800", color: "#16a34a" }}>EasyCommerce</span>
         <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
           <span onClick={() => navigate("/como-funciona")} style={{ color: "#64748b", fontSize: "15px", cursor: "pointer" }}>Cómo Funciona</span>
-          <span onClick={() => navigate("/login")} style={{ color: "#64748b", textDecoration: "none", fontSize: "15px", cursor: "pointer" }}>Iniciar Sesión</span>
+          <span onClick={() => navigate("/login")} style={{ color: "#64748b", fontSize: "15px", cursor: "pointer" }}>Iniciar Sesión</span>
           <span onClick={() => navigate("/register")} style={{ background: "#f97316", color: "white", padding: "10px 20px", borderRadius: "8px", fontWeight: "bold", fontSize: "14px", cursor: "pointer" }}>Comenzar Gratis</span>
         </div>
       </nav>
@@ -112,7 +111,7 @@ export default function App() {
       <div style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)", padding: "80px 40px", textAlign: "center" }}>
         <div style={{ maxWidth: "700px", margin: "0 auto" }}>
           <div style={{ display: "inline-block", background: "#dcfce7", color: "#16a34a", padding: "6px 16px", borderRadius: "20px", fontSize: "13px", fontWeight: "bold", marginBottom: "24px" }}>
-            🤖 Impulsado por Inteligencia Artificial
+            Impulsado por Inteligencia Artificial
           </div>
           <h1 style={{ fontSize: "48px", fontWeight: "900", color: "#0f172a", margin: "0 0 20px", lineHeight: "1.1" }}>
             Transforma tu MYPE con <span style={{ color: "#16a34a" }}>Inteligencia Artificial</span>
@@ -124,14 +123,14 @@ export default function App() {
             onClick={() => navigate("/register")}
             style={{ background: "#f97316", color: "white", border: "none", padding: "16px 36px", borderRadius: "12px", fontSize: "18px", fontWeight: "bold", cursor: "pointer", boxShadow: "0 4px 14px rgba(249,115,22,0.4)" }}
           >
-            🚀 Comenzar Gratis — Sube tu CSV
+            Comenzar Gratis — Sube tu CSV
           </button>
           <p style={{ color: "#94a3b8", fontSize: "13px", marginTop: "12px" }}>Sin tarjetas de crédito. Tu privacidad es nuestra prioridad.</p>
         </div>
       </div>
 
       {/* FEATURES */}
-      <div id="como" style={{ padding: "80px 40px", background: "white" }}>
+      <div style={{ padding: "80px 40px", background: "white" }}>
         <div style={{ maxWidth: "900px", margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "32px" }}>
           {[
             { icon: "⚡", title: "Análisis al Instante", desc: "Procesamos hasta 25 negocios en paralelo con arquitectura serverless en AWS." },
@@ -148,10 +147,10 @@ export default function App() {
       </div>
 
       {/* UPLOAD SECTION */}
-      <div id="upload" style={{ padding: "80px 40px", background: "#f8fafc" }}>
+      <div style={{ padding: "80px 40px", background: "#f8fafc" }}>
         <div style={{ maxWidth: "700px", margin: "0 auto" }}>
           <h2 style={{ textAlign: "center", fontSize: "32px", fontWeight: "800", color: "#0f172a", marginBottom: "8px" }}>
-            📂 Sube tu archivo CSV
+            Sube tu archivo CSV
           </h2>
           <p style={{ textAlign: "center", color: "#64748b", marginBottom: "40px" }}>
             El CSV debe tener las columnas: nombre, rubro, direccion, tiene_redes, acepta_pagos_digitales, inventario_digital
@@ -166,20 +165,17 @@ export default function App() {
             >
               Seleccionar CSV
             </button>
-
             {fileName && (
               <p style={{ color: "#16a34a", fontWeight: "bold", margin: "8px 0" }}>✅ {fileName} — {businesses.length} negocios cargados</p>
             )}
-
             {businesses.length > 0 && !processing && (
               <button
                 onClick={processBusinesses}
                 style={{ display: "block", width: "100%", marginTop: "20px", background: "#f97316", color: "white", border: "none", padding: "14px", borderRadius: "10px", fontSize: "16px", fontWeight: "bold", cursor: "pointer" }}
               >
-                🤖 Analizar {businesses.length} Negocios con IA
+                Analizar {businesses.length} Negocios con IA
               </button>
             )}
-
             {processing && (
               <div style={{ marginTop: "20px" }}>
                 <p style={{ color: "#64748b", fontWeight: "bold" }}>Procesando {progress}/{total} negocios...</p>
@@ -191,14 +187,29 @@ export default function App() {
             )}
           </div>
 
+          {/* CSV EXAMPLE */}
           <div style={{ marginTop: "24px", background: "#0f172a", borderRadius: "12px", padding: "20px" }}>
-            <p style={{ color: "#94a3b8", fontSize: "12px", marginBottom: "8px" }}>📋 Ejemplo de CSV:</p>
-            <pre style={{ color: "#86efac", fontSize: "11px", margin: 0, overflow: "auto" }}>
-{`nombre,rubro,direccion,tiene_redes,acepta_pagos_digitales,inventario_digital
-Bodega Don Carlos,abarrotes,Av. Universitaria 234 Ate,no,no,no
-Pollería El Gordo,restaurante,Jr. Lima 45 Miraflores,facebook,yape,no
-Salón Belinda,peluquería,Av. Túpac 89 SJL,instagram,no,no`}
-            </pre>
+            <p style={{ color: "#94a3b8", fontSize: "12px", marginBottom: "12px" }}>Ejemplo de CSV:</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "6px", marginBottom: "6px" }}>
+              {["nombre", "rubro", "direccion", "tiene_redes", "acepta_pagos_digitales", "inventario_digital"].map((col, i) => (
+                <div key={i} style={{ background: "#16a34a", color: "white", padding: "8px 4px", borderRadius: "6px", fontSize: "9px", fontWeight: "700", textAlign: "center" }}>
+                  {col}
+                </div>
+              ))}
+            </div>
+            {[
+              ["Bodega Don Carlos", "abarrotes", "Av. Universitaria 234", "no", "no", "no"],
+              ["Pollería El Gordo", "restaurante", "Jr. Lima 45 Miraflores", "facebook", "yape", "no"],
+              ["Salón Belinda", "peluquería", "Av. Túpac 89 SJL", "instagram", "no", "no"],
+            ].map((row, i) => (
+              <div key={i} style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "6px", marginBottom: "4px" }}>
+                {row.map((cell, j) => (
+                  <div key={j} style={{ background: i % 2 === 0 ? "#1e293b" : "#0f172a", border: "1px solid #334155", padding: "8px 4px", borderRadius: "4px", fontSize: "9px", color: cell === "no" ? "#ef4444" : cell === "si" ? "#22c55e" : "#94a3b8", fontWeight: cell === "no" || cell === "si" ? "700" : "400", textAlign: "center" }}>
+                    {cell}
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -208,7 +219,7 @@ Salón Belinda,peluquería,Av. Túpac 89 SJL,instagram,no,no`}
         <div style={{ padding: "60px 40px", background: "white" }}>
           <div style={{ maxWidth: "900px", margin: "0 auto" }}>
             <h2 style={{ textAlign: "center", fontSize: "32px", fontWeight: "800", color: "#0f172a", marginBottom: "40px" }}>
-              📊 Resultados — {reports.length}/{total} negocios analizados
+              Resultados — {reports.length}/{total} negocios analizados
             </h2>
             <div style={{ display: "grid", gap: "20px" }}>
               {reports.map((report, i) => {
@@ -229,14 +240,12 @@ Salón Belinda,peluquería,Av. Túpac 89 SJL,instagram,no,no`}
                         <div style={{ fontSize: "11px", color: "#94a3b8", fontWeight: "bold" }}>SCORE DIGITAL</div>
                       </div>
                     </div>
-
                     {report.summary && (
                       <p style={{ margin: "16px 0 0", color: "#64748b", fontSize: "14px", lineHeight: "1.7" }}>{report.summary}</p>
                     )}
-
                     {report.priorityActions?.length > 0 && (
                       <div style={{ marginTop: "16px", background: "white", borderRadius: "10px", padding: "16px", border: "1px solid #e2e8f0" }}>
-                        <p style={{ margin: "0 0 10px", color: "#f97316", fontWeight: "bold", fontSize: "13px" }}>⚡ Acciones Prioritarias:</p>
+                        <p style={{ margin: "0 0 10px", color: "#f97316", fontWeight: "bold", fontSize: "13px" }}>Acciones Prioritarias:</p>
                         {report.priorityActions.slice(0, 3).map((action: string, j: number) => (
                           <div key={j} style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "6px" }}>
                             <span style={{ color: "#16a34a", fontWeight: "bold" }}>→</span>
@@ -255,7 +264,7 @@ Salón Belinda,peluquería,Av. Túpac 89 SJL,instagram,no,no`}
 
       {/* FOOTER */}
       <footer style={{ background: "#0f172a", color: "#94a3b8", textAlign: "center", padding: "32px", fontSize: "13px" }}>
-        <p style={{ margin: 0 }}>© 2026 EasyCommerce AI — Transformación Digital para MYPES peruanas</p>
+        <p style={{ margin: 0 }}>2026 EasyCommerce AI — Transformación Digital para MYPES peruanas</p>
       </footer>
     </div>
   );
