@@ -1,29 +1,25 @@
 import json
-from src.services.recommendation.groq_client import call_groq
-from src.services.recommendation.prompts import get_business_analysis_prompt
+from src.services.recommendation.groq_client import GroqClient
+from src.services.recommendation.prompts import build_analysis_prompt
 
-def analyze_business(business: dict) -> dict:
-    prompt = get_business_analysis_prompt(business)
+def generate(business_data) -> dict:
+    client = GroqClient()
+    prompt = build_analysis_prompt(business_data)
+    
+    messages = [
+        {"role": "system", "content": "You are a highly capable digital transformation consultant. You strictly output JSON."},
+        {"role": "user", "content": prompt}
+    ]
+    
+    response_content = client.chat_completion(messages)
     
     try:
-        response = call_groq(prompt)
-        
-        # Limpia las respuestas por si Groq agrega texto extra de mas
-        response = response.strip()
-        if response.startswith("```json"):
-            response = response[7:]
-        if response.startswith("```"):
-            response = response[3:]
-        if response.endswith("```"):
-            response = response[:-3]
-        
-        result = json.loads(response.strip())
-        return result
-        
+        data = json.loads(response_content)
+        required = ['digitalMaturityScore', 'recommendations', 'priorityActions']
+        for req in required:
+            if req not in data:
+                raise ValueError(f"Missing {req} in LLM response")
+        return data
     except json.JSONDecodeError as e:
-        return {
-            "error": f"Error parseando respuesta de Groq: {str(e)}",
-            "raw_response": response
-        }
-    except Exception as e:
-        raise Exception(f"Error llamando a Groq: {str(e)}")
+        print(f"[ERROR] JSON decode error from Groq response: {e}")
+        raise

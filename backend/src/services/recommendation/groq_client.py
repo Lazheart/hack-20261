@@ -1,25 +1,38 @@
 import os
-from groq import Groq
+import json
+import time
+import requests
+from requests.exceptions import RequestException
 
-def get_groq_client():
-    api_key = os.environ.get('API_KEY_LLM')
-    if not api_key:
-        raise ValueError("API_KEY_LLM no está configurada")
-    return Groq(api_key=api_key)
+class GroqClient:
+    def __init__(self):
+        self.api_key = os.environ.get('API_KEY_LLM')
+        self.url = "https://api.groq.com/openai/v1/chat/completions"
+        self.headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
 
-def call_groq(prompt: str) -> str:
-    client = get_groq_client()
-    
-    response = client.chat.completions.create(
-        model="llama3-8b-8192",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        temperature=0.3,
-        max_tokens=2000
-    )
-    
-    return response.choices[0].message.content
+    def chat_completion(self, messages, model="llama3-8b-8192", temperature=0.7):
+        payload = {
+            "model": model,
+            "messages": messages,
+            "temperature": temperature,
+            "response_format": {"type": "json_object"}
+        }
+        
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                response = requests.post(self.url, headers=self.headers, json=payload, timeout=30)
+                if response.status_code == 429:
+                    print(f"[WARN] Rate limit hit. Retrying in {2 ** attempt} seconds...")
+                    time.sleep(2 ** attempt)
+                    continue
+                response.raise_for_status()
+                return response.json()['choices'][0]['message']['content']
+            except RequestException as e:
+                print(f"[ERROR] Groq API error: {e}")
+                if attempt == max_retries - 1:
+                    raise
+                time.sleep(2 ** attempt)
