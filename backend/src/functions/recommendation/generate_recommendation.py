@@ -1,28 +1,28 @@
 import json
-import os
-import uuid
-from datetime import datetime
-from src.services.recommendation.recommendation import generate
-from src.database.dynamodb import DynamoDBClient
-from src.events.recommendation_events import publish_recommendation_generated
-
-def handler(event, context):
+from src.services.recommendation.groq_client import GroqClient
+from src.services.recommendation.prompts import build_analysis_prompt
+ 
+def generate(business_data) -> dict:
+    client = GroqClient()
+    prompt = build_analysis_prompt(business_data)
+    
+    messages = [
+        {"role": "system", "content": "You are a highly capable digital transformation consultant. You strictly output JSON."},
+        {"role": "user", "content": prompt}
+    ]
+    
+    response_content = client.chat_completion(messages)
+    
     try:
-        # Extraer data de EventBridge
-        detail = event.get('detail', {})
-        
-        # Validar si tiene lo necesario
-        if not detail or 'businessId' not in detail:
-            print("[ERROR] No business data in event detail")
-            return
-            
-        recommendation = generate(detail)
-        
-        db = DynamoDBClient()
-        table = os.environ.get('REPORTS_TABLE')
-        
-        report_id = str(uuid.uuid4())
-        now = datetime.utcnow().isoformat() + "Z"
+        data = json.loads(response_content)
+        required = ['digitalMaturityScore', 'recommendations', 'priorityActions']
+        for req in required:
+            if req not in data:
+                raise ValueError(f"Missing {req} in LLM response")
+        return data
+    except json.JSONDecodeError as e:
+        print(f"[ERROR] JSON decode error from Groq response: {e}")
+        raise
         
         report_data = {
             'reportId': report_id,
