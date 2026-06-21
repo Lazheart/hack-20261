@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { TrendingUp, Lightbulb, MapPin, Upload } from "lucide-react";
 
 const API_URL = "https://89vw70b8uf.execute-api.us-east-1.amazonaws.com/dev";
 
@@ -133,12 +134,12 @@ export default function App() {
       <div style={{ padding: "80px 40px", background: "white" }}>
         <div style={{ maxWidth: "900px", margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "32px" }}>
           {[
-            { icon: "⚡", title: "Análisis al Instante", desc: "Procesamos hasta 25 negocios en paralelo con arquitectura serverless en AWS." },
-            { icon: "🎯", title: "Recomendaciones Claras", desc: "Nuestra IA te da herramientas específicas como Yape, Loyverse, Google Maps y más." },
-            { icon: "📅", title: "Roadmap Personalizado", desc: "Plan semana a semana adaptado al nivel digital de cada negocio." },
+            { icon: <TrendingUp size={40} color="#16a34a" strokeWidth={1.5} />, title: "Análisis al Instante", desc: "Procesamos hasta 25 negocios en paralelo con arquitectura serverless en AWS." },
+            { icon: <Lightbulb size={40} color="#f97316" strokeWidth={1.5} />, title: "Recomendaciones Claras", desc: "Nuestra IA te da herramientas específicas como Yape, Loyverse, Google Maps y más." },
+            { icon: <MapPin size={40} color="#6366f1" strokeWidth={1.5} />, title: "Roadmap Personalizado", desc: "Plan semana a semana adaptado al nivel digital de cada negocio." },
           ].map((f, i) => (
             <div key={i} style={{ background: "#f8fafc", borderRadius: "16px", padding: "32px", textAlign: "center" }}>
-              <div style={{ fontSize: "40px", marginBottom: "16px" }}>{f.icon}</div>
+              <div style={{ marginBottom: "16px" }}>{f.icon}</div>
               <h3 style={{ margin: "0 0 12px", color: "#0f172a", fontSize: "18px" }}>{f.title}</h3>
               <p style={{ margin: 0, color: "#64748b", fontSize: "14px", lineHeight: "1.6" }}>{f.desc}</p>
             </div>
@@ -158,7 +159,9 @@ export default function App() {
 
           <div style={{ background: "white", borderRadius: "16px", padding: "40px", boxShadow: "0 4px 20px rgba(0,0,0,0.08)", border: "2px dashed #e2e8f0", textAlign: "center" }}>
             <input ref={fileRef} type="file" accept=".csv" onChange={handleFileUpload} style={{ display: "none" }} />
-            <div style={{ fontSize: "48px", marginBottom: "16px" }}>📁</div>
+            <div style={{ marginBottom: "16px" }}>
+  <Upload size={48} color="#16a34a" strokeWidth={1.5} />
+</div>
             <button
               onClick={() => fileRef.current?.click()}
               style={{ background: "#16a34a", color: "white", border: "none", padding: "12px 28px", borderRadius: "10px", fontSize: "16px", fontWeight: "bold", cursor: "pointer", marginBottom: "16px" }}
