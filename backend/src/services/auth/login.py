@@ -1,8 +1,13 @@
 import os
-import bcrypt
 import jwt
+import hashlib
+import hmac
 from datetime import datetime, timedelta
 from src.database.dynamodb import DynamoDBClient
+
+def verify_password(password: str, stored: str) -> bool:
+    salt, hashed = stored.split(":")
+    return hmac.new(salt.encode(), password.encode(), hashlib.sha256).hexdigest() == hashed
 
 def login_user(email, password):
     db = DynamoDBClient()
@@ -13,7 +18,7 @@ def login_user(email, password):
         raise ValueError("Invalid credentials")
         
     user = users[0]
-    if not bcrypt.checkpw(password.encode('utf-8'), user['passwordHash'].encode('utf-8')):
+    if not verify_password(password, user['passwordHash']):
         raise ValueError("Invalid credentials")
         
     exp = datetime.utcnow() + timedelta(hours=24)
@@ -25,7 +30,9 @@ def login_user(email, password):
     
     return {
         'token': token,
-        'userId': user['userId'],
-        'email': user['email'],
-        'name': user['name']
+        'user': {
+            'userId': user['userId'],
+            'email': user['email'],
+            'name': user['name']
+        }
     }

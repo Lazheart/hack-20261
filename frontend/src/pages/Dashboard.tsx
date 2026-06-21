@@ -1,7 +1,32 @@
-import { useState, useRef, useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { Upload } from "lucide-react";
 import { businessService } from "../services/business.service";
 import  type { Business, Report } from "../types";
+import { useAuth } from "../hooks/useAuth";
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+interface Business {
+  nombre: string;
+  rubro: string;
+  direccion: string;
+  tiene_redes: string;
+  acepta_pagos_digitales: string;
+  inventario_digital: string;
+}
+
+interface Report {
+  businessId: string;
+  nombre: string;
+  digitalMaturityScore: number;
+  maturityLevel: string;
+  summary: string;
+  recommendations: any[];
+  priorityActions: string[];
+  quickWins: string[];
+}
+
 
 export default function Dashboard() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
@@ -110,7 +135,9 @@ export default function Dashboard() {
         {/* UPLOAD */}
         <div style={{ background: "white", borderRadius: "16px", padding: "32px", marginBottom: "32px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", border: "2px dashed #e2e8f0", textAlign: "center" }}>
           <input ref={fileRef} type="file" accept=".csv" onChange={handleFileUpload} style={{ display: "none" }} />
-          <div style={{ fontSize: "48px", marginBottom: "16px" }}>📁</div>
+          <div style={{ marginBottom: "16px" }}>
+  <Upload size={48} color="#16a34a" strokeWidth={1.5} />
+</div>
           <button
             onClick={() => fileRef.current?.click()}
             style={{ background: "#16a34a", color: "white", border: "none", padding: "12px 28px", borderRadius: "10px", fontSize: "15px", fontWeight: "bold", cursor: "pointer" }}
@@ -146,13 +173,27 @@ export default function Dashboard() {
 
         {/* CSV EXAMPLE */}
         <div style={{ background: "#0f172a", borderRadius: "12px", padding: "20px", marginBottom: "32px" }}>
-          <p style={{ color: "#94a3b8", fontSize: "12px", marginBottom: "8px" }}>📋 Ejemplo de CSV:</p>
-          <pre style={{ color: "#86efac", fontSize: "11px", margin: 0, overflow: "auto" }}>
-{`nombre,rubro,direccion,tiene_redes,acepta_pagos_digitales,inventario_digital
-Bodega Don Carlos,abarrotes,Av. Universitaria 234 Ate,no,no,no
-Pollería El Gordo,restaurante,Jr. Lima 45 Miraflores,facebook,yape,no
-Salón Belinda,peluquería,Av. Túpac 89 SJL,instagram,no,no`}
-          </pre>
+          <p style={{ color: "#94a3b8", fontSize: "12px", marginBottom: "12px" }}>Ejemplo de CSV:</p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "6px", marginBottom: "6px" }}>
+            {["nombre", "rubro", "direccion", "tiene_redes", "acepta_pagos_digitales", "inventario_digital"].map((col, i) => (
+              <div key={i} style={{ background: "#16a34a", color: "white", padding: "8px 4px", borderRadius: "6px", fontSize: "9px", fontWeight: "700", textAlign: "center" }}>
+                {col}
+              </div>
+            ))}
+          </div>
+          {[
+            ["Bodega Don Carlos", "abarrotes", "Av. Universitaria 234", "no", "no", "no"],
+            ["Pollería El Gordo", "restaurante", "Jr. Lima 45 Miraflores", "facebook", "yape", "no"],
+            ["Salón Belinda", "peluquería", "Av. Túpac 89 SJL", "instagram", "no", "no"],
+          ].map((row, i) => (
+            <div key={i} style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "6px", marginBottom: "4px" }}>
+              {row.map((cell, j) => (
+                <div key={j} style={{ background: i % 2 === 0 ? "#1e293b" : "#0f172a", border: "1px solid #334155", padding: "8px 4px", borderRadius: "4px", fontSize: "9px", color: cell === "no" ? "#ef4444" : cell === "si" ? "#22c55e" : "#94a3b8", fontWeight: cell === "no" || cell === "si" ? "700" : "400", textAlign: "center" }}>
+                  {cell}
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
 
         {/* RESULTS */}

@@ -1,22 +1,31 @@
 import os
 import uuid
-import bcrypt
+import jwt
+import hashlib
+import hmac
 from datetime import datetime
 from src.database.dynamodb import DynamoDBClient
 from src.events.auth_events import publish_user_registered
+
+def hash_password(password: str) -> str:
+    salt = os.urandom(32).hex()
+    hashed = hmac.new(salt.encode(), password.encode(), hashlib.sha256).hexdigest()
+    return f"{salt}:{hashed}"
+
+def verify_password(password: str, stored: str) -> bool:
+    salt, hashed = stored.split(":")
+    return hmac.new(salt.encode(), password.encode(), hashlib.sha256).hexdigest() == hashed
 
 def register_user(email, password, name):
     db = DynamoDBClient()
     table = os.environ.get('USERS_TABLE')
     
-    # Check if user exists
     existing = db.query(table, 'email = :e', {':e': email}, index_name='email-index')
     if existing:
         raise ValueError("User with this email already exists")
         
     user_id = str(uuid.uuid4())
-    salt = bcrypt.gensalt(rounds=12)
-    hashed = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+    hashed = hash_password(password)
     
     now = datetime.utcnow().isoformat() + "Z"
     user = {
@@ -30,18 +39,12 @@ def register_user(email, password, name):
     
     db.put_item(table, user)
     
-    import jwt
-    token = jwt.encode({'userId': user_id, 'email': email, 'exp': datetime.utcnow().timestamp() + 86400}, os.environ.get('JWT_SECRET'), algorithm='HS256')
+    token = jwt.encode(
+        {'userId': user_id, 'email': email, 'exp': int(datetime.utcnow().timestamp()) + 86400},
+        os.environ.get('JWT_SECRET'),
+        algorithm='HS256'
+    )
     
-    publish_user_registered({
-        'userId': user_id,
-        'email': email,
-        'name': name
-    })
+    publish_user_registered({'userId': user_id, 'email': email, 'name': name})
     
-    return {
-        'userId': user_id,
-        'email': email,
-        'name': name,
-        'token': token
-    }
+    return {'userId': user_id, 'email': email, 'name': name, 'token': token}
